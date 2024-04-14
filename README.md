@@ -1,0 +1,14 @@
+
+Docker compose - runs postgres database container and pgadmin4
+
+To run Docker :
+   docker compose up 
+
+After running container to access pg-admin: Go to:
+ https:localhost:5432//
+ (default email - admin@pgadmin.com , password - admin)
+
+ To inspect postgres database using pgadmin:
+  - create a new server connection using server provide name - postgres on port 5432
+  - postgres database name - kotlin_app_b
+  - username: admin password: admin
