@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'api',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -73,16 +74,19 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': 'kotlin_app_db',
-       'USER': 'admin',
-       'PASSWORD': 'admin',
-       'HOST': 'postgres',
-       'PORT': '5432',
-   }
+    default: {
+        'ENGINE': 'django_postgres_extensions.backends.postgresql',
+        'NAME': 'kotlin_app_db',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PORT': 8002,
+        'PASSWORD':'root'
+    },
 }
+
+AUTH_USER_MODEL = "api.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

@@ -50,6 +50,7 @@ class Income(Transaction):
     income_type = models.CharField(max_length=7, choices=INCOME_TYPES)
 
 class Expense(Transaction):
+    budget = models.ForeignKey(Budget, on_delete=models.CASCADE , default=None)
     EXPENSE_TYPES = (
         ('Shopping', 'Shopping'),
         ('Medical', 'Medical'),
