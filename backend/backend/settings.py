@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'kotlin_app_db',
         'HOST': 'localhost',
         'USER': 'root',
-        'PORT': 8002,
+        'PORT': 5432,
         'PASSWORD':'root'
     }
 }

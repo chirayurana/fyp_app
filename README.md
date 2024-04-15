@@ -12,3 +12,6 @@ After running container to access pg-admin: Go to:
   - create a new server connection using server provide name - postgres on port 5432
   - postgres database name - kotlin_app_db
   - username: admin password: admin
+
+
+if you face authentication issues then go to pgconf inside the docker volume and uncomment the port ther
