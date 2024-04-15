@@ -1,11 +1,11 @@
 
 Docker compose - Creates postgres database container and pgadmin4
 
-To run Docker :
+To run Docker : Inside root directory run.
    docker compose up 
 
-After running container to access pg-admin: Go to port 5050
- (default email - admin@pgadmin.com , password - admin)
+After running container to access pg-admin: Port 5050
+ (default email - admin@pgadmin.com , password - password)
 
  
 For Acessing Postgres : Port 5432
