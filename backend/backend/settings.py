@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
 ]
 
 MIDDLEWARE = [
@@ -76,17 +77,17 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 
 DATABASES = {
-    default: {
-        'ENGINE': 'django_postgres_extensions.backends.postgresql',
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'kotlin_app_db',
         'HOST': 'localhost',
         'USER': 'root',
-        'PORT': 8002,
+        'PORT': 5432,
         'PASSWORD':'root'
-    },
+    }
 }
 
-AUTH_USER_MODEL = "api.User"
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -128,3 +129,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'api.CustomUser'

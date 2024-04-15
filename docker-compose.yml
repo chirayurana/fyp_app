@@ -15,11 +15,11 @@ services:
     networks:
       - postgres
     ports:
-      - "8002:8002"
+      - "5432:5432"
     volumes:
       - pg-data:/var/lib/postgresql/data
     expose:
-      - "8002"
+      - "5432"
 
   pgadmin:
     image: dpage/pgadmin4:8.2
