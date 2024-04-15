@@ -14,4 +14,5 @@ After running container to access pg-admin: Go to:
   - username: admin password: admin
 
 
-if you face authentication issues then go to pgconf inside the docker volume and uncomment the port ther
+if you face authentication issues then go to pgconf inside the docker volume and uncomment the port there using 
+the exposed port address
