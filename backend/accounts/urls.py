@@ -4,9 +4,11 @@ from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import ObtainAuthToken
 
 from accounts import views
+from api.views.transaction import ExpenseView
 
 router = DefaultRouter()
-router.register(r'user' , views.UserViewApi)
+router.register(r'users' , views.UserViewApi , basename="user")
+#router.register(r'expenses' , ExpenseView)
 
 
 urlpatterns = [

@@ -7,7 +7,7 @@ class BaseBudget(models.Model):
     max_limit = models.IntegerField()
     current_spent = models.IntegerField(default=0)
     added_at = models.DateField(auto_now_add=True)
-    expiry_at = models.DateField()
+    expiry_at = models.DateField(null=True)
 
     class Meta:
         abstract = True
