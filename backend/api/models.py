@@ -25,6 +25,10 @@ class BaseBudget(models.Model):
             'expiry_at': self.expiry_at
         }
 
+    def update_current_spent(self, amount):
+        self.current_spent += amount
+        self.save()
+
 class Budget(BaseBudget):
     def dict(self):
         base_dict = super().dict()
@@ -63,6 +67,11 @@ class Transaction(models.Model):
             'added_at': self.added_at
         }
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.owner.total_balance += self.amount
+        self.owner.save()
+
 class Income(Transaction):
     INCOME_TYPES = (
         ('Salary', 'Salary'),
@@ -93,3 +102,10 @@ class Expense(Transaction):
             'expense_type': self.expense_type
         })
         return base_dict
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.owner.total_balance -= self.amount
+        self.owner.save()
+        if self.budget:
+            self.budget.update_current_spent(self.amount)
