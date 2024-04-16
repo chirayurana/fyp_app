@@ -4,7 +4,6 @@ from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import ObtainAuthToken
 
 from accounts import views
-from api.views.transaction import ExpenseView
 
 router = DefaultRouter()
 router.register(r'users' , views.UserViewApi , basename="user")

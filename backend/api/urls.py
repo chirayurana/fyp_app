@@ -3,8 +3,8 @@ from django.urls import path , include
 from rest_framework import routers
 
 from .views.budget import BudgetView
-from .views.transaction import IncomeView , ExpenseView
-
+from  .views.income import IncomeView
+from .views.expense import ExpenseView
 
 router = routers.DefaultRouter()
 router.register(r'budgets' , BudgetView , basename="budget")
