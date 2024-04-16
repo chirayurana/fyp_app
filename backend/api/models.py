@@ -1,11 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from accounts.models import CustomUser
 
-class CustomUser(AbstractUser):
-    total_balance = models.IntegerField(default=0)
 
-    def __str__(self):
-        return f"{self.username} - {self.total_balance}"
 
 class BaseBudget(models.Model):
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

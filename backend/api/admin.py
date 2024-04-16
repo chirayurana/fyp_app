@@ -1,5 +1,6 @@
 from django.contrib import admin
-from api.models import CustomUser , Budget , Subscription , Income , Expense
+from api.models import Budget , Subscription , Income , Expense
+from accounts.models import CustomUser
 
 admin.site.register(CustomUser)
 admin.site.register(Budget)
