@@ -36,6 +36,9 @@ class Budget(BaseBudget):
 
 
 class Subscription(BaseBudget):
+    max_limit = models.FloatField(null=True)
+    amount = models.FloatField(null=True)
+    active = models.BooleanField(default=True )
     last_paid = models.DateField(auto_now_add=True)
     renewal_after = models.IntegerField(default=30)
 
