@@ -7,10 +7,11 @@ from rest_framework.decorators import authentication_classes , permission_classe
 from rest_framework import authentication
 from rest_framework import permissions
 from rest_framework.response import Response
-from rest_framework import status 
+from rest_framework import status , permissions , authentication
 
 from .models import CustomUser
 from .serializers import UserViewSerializer , UserCreateSerializer
+
 
 
 class UserViewApi(ReadOnlyModelViewSet):
@@ -19,6 +20,11 @@ class UserViewApi(ReadOnlyModelViewSet):
   """
   queryset = CustomUser.objects.all()
   serializer_class = UserViewSerializer
+  authentication_classes = [authentication.TokenAuthentication]
+  permission_classes = [permissions.IsAuthenticated]
+
+  def get_queryset(self):
+      return CustomUser.objects.filter(username = self.request.user.username)
 
 
 class UserCreateApi(generics.CreateAPIView):
