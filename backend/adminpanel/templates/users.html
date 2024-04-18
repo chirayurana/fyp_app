@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% load compress%}
+{% load static %}
+{% compress css %}
+<link rel="stylesheet"
+    href="{% static 'src/output.css' %}">
+{% endcompress %}
+{% block Content %}
+
+{% endblock %}
