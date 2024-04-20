@@ -1,3 +1,9 @@
+To run the backend
+ first migrate the accounts app before anything else otherwise the backend will face problems with migrations
+   python manage.py makemigrations accounts
+   python manage.py migrate accounts
+ then you can run other migrations
+
 
 Docker compose - Creates postgres database container and pgadmin4
 
