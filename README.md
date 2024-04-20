@@ -1,9 +1,21 @@
-To run the backend
- first migrate the accounts app before anything else otherwise the backend will face problems with migrations
-   python manage.py makemigrations accounts
-   python manage.py migrate accounts
- then you can run other migrations
+# Setting Up Backend Environment
 
+## (Backend) Migrating the Accounts App (sqlite3 )
+
+Before proceeding with any other backend operations, it's important to migrate the accounts app to avoid potential issues with migrations.
+
+```bash
+python manage.py makemigrations accounts
+python manage.py migrate accounts
+```
+finally run 
+```bash
+python manage.py makemigrations
+python manage.py migrate 
+```
+
+
+## For Deployment Only (postgres)
 
 Docker compose - Creates postgres database container and pgadmin4
 
