@@ -17,7 +17,7 @@
             </svg></div>
         <div class="px-4 text-gray-700">
             <h3 class="text-sm tracking-wider">Total Users </h3>
-            <p class="text-3xl">102</p>
+            <p class="text-3xl">{{ total_users }}</p>
         </div>
     </div>
     <div class="flex items-center bg-white border rounded-sm overflow-hidden shadow transition duration-300 hover:scale-110">
@@ -30,7 +30,7 @@
       </div>
       <div class="px-4 text-gray-700">
           <h3 class="text-sm tracking-wider">Total Transactions</h3>
-          <p class="text-3xl">41245</p>
+          <p class="text-3xl">{{total_transactions}}</p>
       </div>
   </div>
   
@@ -42,8 +42,8 @@
                 </path>
             </svg></div>
         <div class="px-4 text-gray-700">
-            <h3 class="text-sm tracking-wider">Total Feedback</h3>
-            <p class="text-3xl">32</p>
+            <h3 class="text-sm tracking-wider"></h3>
+            <p class="text-3xl">{{total_feedback}}</p>
         </div>
     </div>
     <div class="flex items-center bg-white border rounded-sm overflow-hidden shadow transition duration-300 hover:scale-110">
@@ -55,14 +55,14 @@
             </svg></div>
         <div class="px-4 text-gray-700">
             <h3 class="text-sm tracking-wider">Server Load</h3>
-            <p class="text-3xl">34.12%</p>
+            <p class="text-3xl">{{server_load}}%</p>
         </div>
     </div>
 </div>
 
 <!--Transactions ui-->
 
-<div class="mt-12 flex flex-row ml-12 gap-x-4">
+<div class="mt-12 flex flex-row ml-20 gap-x-12 items-center">
   <div class="bg-purple-300 shadow rounded-lg p-4 sm:p-6 xl:p-8 max-w-[45%]">
     <div class="mb-4 flex items-center justify-between">
        <div>
@@ -178,7 +178,7 @@
   </div>
 
 
-  <div class="bg-blue-400 shadow rounded-lg p-4 sm:p-6 xl:p-8 max-w-[45%] animation-fade-up">
+  <div class="bg-blue-400 shadow rounded-lg p-4 sm:p-6 xl:p-8 max-w-[45%] ">
     <div class="mb-4 flex items-center justify-between">
        <div>
           <h3 class="text-xl font-bold text-gray-900 mb-2">Latest Transactions</h3>
