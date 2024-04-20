@@ -82,6 +82,7 @@ class Income(Transaction):
 
     def save(self, *args, **kwargs):
         self.owner.total_balance += self.amount
+        self.owner.number_of_transactions += 1
         self.owner.save()
         super().save(*args, **kwargs)
 class Expense(Transaction):
@@ -100,6 +101,7 @@ class Expense(Transaction):
        if self.budget:
         self.budget.update_current_spent(self.amount)
        self.owner.total_balance -= self.amount
+       self.owner.number_of_transactions += 1
        self.owner.save()
        super().save(*args, **kwargs)
 

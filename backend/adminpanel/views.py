@@ -19,7 +19,10 @@ def admin_panel_home_page_view(request):
 
 
 def users_page_view(request):
-  return render(request , "users.html")
+  content = {
+    "users" : CustomUser.objects.all()
+  }
+  return render(request , "users.html" , content)
 
 def login_view(request):
    if request.method == "POST":
