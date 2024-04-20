@@ -7,14 +7,13 @@ from random import randint
 
 @login_required(login_url="/login")
 def admin_panel_home_page_view(request):
-  number_of_users = CustomUser.objects.all().count()
-  total_transactions = Income.objects.all().count() + Expense.objects.all().count()
-  total_feedback = 0
   content = {
     "total_users" : CustomUser.objects.all().count(),
     "total_transactions" : Income.objects.all().count() + Expense.objects.all().count(),
-    "total_feedback" : total_feedback,
-    "server_load" : randint(0,15)
+    "total_feedback" : 0,
+    "server_load" : randint(0,15),
+    "latest_expenses" : Expense.objects.order_by('-added_at')[:8],
+    "latest_incomes" : Income.objects.order_by('-added_at')[:8]
   }
   return render(request , "index.html" , content)
 

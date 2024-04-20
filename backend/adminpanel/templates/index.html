@@ -62,7 +62,7 @@
 
 <!--Transactions ui-->
 
-<div class="mt-12 flex flex-row ml-20 gap-x-12 items-center">
+<div class="mt-12 flex flex-row ml-20 gap-x-12">
   <div class="bg-purple-300 shadow rounded-lg p-4 sm:p-6 xl:p-8 max-w-[45%]">
     <div class="mb-4 flex items-center justify-between">
        <div>
@@ -87,88 +87,24 @@
                             Date & Time
                          </th>
                          <th scope="col" class="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Amount
+                            TrAmount
                          </th>
                       </tr>
                    </thead>
                    <tbody class="bg-white">
-                      <tr>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900">
-                             <span class="font-semibold">Bonnie Green</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 23 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            Rs 2300
-                         </td>
-                      </tr>
-                      <tr class="bg-gray-50">
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 rounded-lg rounded-left">
-                              <span class="font-semibold">#00910</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 23 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            -Rs 670
-                         </td>
-                      </tr>
-                      <tr>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900">
-                              <span class="font-semibold">#087651</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 18 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            Rs 234
-                         </td>
-                      </tr>
-                      <tr class="bg-gray-50">
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 rounded-lg rounded-left">
-                             <span class="font-semibold">Lana Byrd</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 15 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            Rs 5000
-                         </td>
-                      </tr>
-                      <tr>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900">
-                             <span class="font-semibold">Jese Leos</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 15 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            Rs 2300
-                         </td>
-                      </tr>
-                      <tr class="bg-gray-50">
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 rounded-lg rounded-left">
-                             <span class="font-semibold">THEMESBERG LLC</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 11 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            Rs 560
-                         </td>
-                      </tr>
-                      <tr>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900">
-                             <span class="font-semibold">Lana Lysle</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 6 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            Rs 1437
-                         </td>
-                      </tr>
+                     {% for expense in latest_expenses %}
+                     <tr>
+                        <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900">
+                            <span class="font-semibold cursor-pointer hover:text-blue-600">{{expense.owner.username}}</span>
+                        </td>
+                        <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
+                          {{expense.added_at.date}}
+                        </td>
+                        <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                           {{expense.amount}}
+                        </td>
+                     </tr>
+                     {% endfor %}
                    </tbody>
                 </table>
              </div>
@@ -207,83 +143,19 @@
                       </tr>
                    </thead>
                    <tbody class="bg-white">
-                      <tr>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900">
-                             <span class="font-semibold">Bonnie Green</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 23 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            Rs 2300
-                         </td>
-                      </tr>
-                      <tr class="bg-gray-50">
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 rounded-lg rounded-left">
-                              <span class="font-semibold">#00910</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 23 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            -Rs 670
-                         </td>
-                      </tr>
-                      <tr>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900">
-                              <span class="font-semibold">#087651</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 18 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            Rs 234
-                         </td>
-                      </tr>
-                      <tr class="bg-gray-50">
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 rounded-lg rounded-left">
-                             <span class="font-semibold">Lana Byrd</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 15 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            Rs 5000
-                         </td>
-                      </tr>
-                      <tr>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900">
-                             <span class="font-semibold">Jese Leos</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 15 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            Rs 2300
-                         </td>
-                      </tr>
-                      <tr class="bg-gray-50">
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900 rounded-lg rounded-left">
-                             <span class="font-semibold">THEMESBERG LLC</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 11 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            Rs 560
-                         </td>
-                      </tr>
-                      <tr>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900">
-                             <span class="font-semibold">Lana Lysle</span>
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
-                            Apr 6 ,2021
-                         </td>
-                         <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                            Rs 1437
-                         </td>
-                      </tr>
+                     {% for income in latest_incomes %}
+                     <tr>
+                        <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900">
+                            <span class="font-semibold cursor-pointer hover:text-blue-600">{{income.owner.username}}</span>
+                        </td>
+                        <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
+                          {{income.added_at.date}}
+                        </td>
+                        <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                           {{income.amount}}
+                        </td>
+                     </tr>
+                     {% endfor %}
                    </tbody>
                 </table>
              </div>
