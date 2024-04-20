@@ -70,10 +70,6 @@ class Transaction(models.Model):
             'added_at': self.added_at
         }
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.owner.total_balance += self.amount
-        self.owner.save()
 
 class Income(Transaction):
     INCOME_TYPES = (
@@ -84,6 +80,10 @@ class Income(Transaction):
 
     income_type = models.CharField(max_length=7, choices=INCOME_TYPES)
 
+    def save(self, *args, **kwargs):
+        self.owner.total_balance += self.amount
+        self.owner.save()
+        super().save(*args, **kwargs)
 class Expense(Transaction):
     budget = models.ForeignKey(Budget, on_delete=models.CASCADE , blank=True , null=True)
     EXPENSE_TYPES = (
@@ -94,6 +94,15 @@ class Expense(Transaction):
     )
 
     expense_type = models.CharField(max_length=15, choices=EXPENSE_TYPES)
+
+
+    def save(self, *args, **kwargs):
+       if self.budget:
+        self.budget.update_current_spent(self.amount)
+       self.owner.total_balance -= self.amount
+       self.owner.save()
+       super().save(*args, **kwargs)
+
 
     def __str__(self):
         return f"{self.owner} - {self.amount} - {self.description} - {self.expense_type}"
@@ -106,9 +115,3 @@ class Expense(Transaction):
         })
         return base_dict
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.owner.total_balance -= self.amount
-        self.owner.save()
-        if self.budget:
-            self.budget.update_current_spent(self.amount)

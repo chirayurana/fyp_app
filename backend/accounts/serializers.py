@@ -9,7 +9,7 @@ from .models import CustomUser
 class UserViewSerializer(serializers.ModelSerializer):
   class Meta:
     model = CustomUser
-    fields = ['username' , 'date_joined' , 'total_balance',]
+    fields = ['id','username' , 'date_joined' , 'total_balance']
 
 class UserCreateSerializer(serializers.ModelSerializer):
 
@@ -17,7 +17,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = CustomUser
-    fields = ['username' , 'total_balance' , 'password' , 'confirm_password']
+    fields = ['username' , 'password' , 'confirm_password']
     extra_kwargs =  {'password': {'write_only' : True}}
   
   def validate(self , data):
@@ -29,7 +29,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
   def create(self , valid_data):
     user = CustomUser.objects.create(
       username= valid_data['username'],
-      total_balance= valid_data['total_balance']
     )
     user.set_password(valid_data['password'])
     user.save()

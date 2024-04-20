@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-+@zmrl=)*(zrpte(l$(x08ul56ywh5ozk)+yiv_cbfw*xrm-*1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -82,14 +82,19 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'kotlin_app_db',
-        'HOST': 'localhost',
-        'USER': 'root',
-        'PORT': 5432,
-        'PASSWORD':'root'
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "mydatabase",
     }
+    # Commenting out PostgreSQL configuration for development
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "NAME": "kotlin_app_db",
+    #     "HOST": "localhost",
+    #     "USER": "root",
+    #     "PORT": 5432,
+    #     "PASSWORD": "root"
+    # }
 }
 
 
