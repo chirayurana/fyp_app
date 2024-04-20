@@ -1,6 +1,9 @@
 # Setting Up Backend Environment
 
-## (Backend) Migrating the Accounts App (sqlite3 )
+This project has sqlite3 and postgres databases configured. To use follow postgres follow the docker guide and comment out
+the postgres setting in backend/backend/settings.py. By default it is using sqllite3.
+
+## (Backend) Migrating the Accounts App (Imp)
 
 Before proceeding with any other backend operations, it's important to migrate the accounts app to avoid potential issues with migrations.
 
