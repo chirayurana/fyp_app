@@ -41,3 +41,9 @@ def logout_view(request):
 
 def data_view(request):
   return render(request , 'data.html')
+
+def expenses_view(request):
+  return render(request , 'expenses.html' , {"expenses" : Expense.objects.all()})
+
+def incomes_view(request):
+  return render(request , 'incomes.html' , {"incomes":Income.objects.all()})

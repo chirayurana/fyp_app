@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+{% block Content %}
+<div class="p-4 sm:ml-64">
+       
+  <!-- component -->
+  <div class="text-gray-900 bg-orange-200 mt-2 rounded-lg">
+      <div class="p-4 flex">
+          <h1 class="text-3xl font-semibold">All Expense Transactions</h1>
+      </div>
+      <div class="px-3 py-4 flex justify-center">
+          <table class="w-full text-md bg-white shadow-md rounded mb-4">
+              <tbody>
+                  <tr class="border-b">
+                      <th class="text-left p-3 px-5">Expense Owner</th>
+                      <th class="text-left p-3 px-2">Expense Amount</th>
+                      <th class="text-left p-3 px-8">Expense Type</th>
+                      <th class="text-left p-3 px-5">Added at</th>
+                      <th></th>
+                  </tr>
+                  {% for expense in expenses %}
+                  <tr class="border-b hover:bg-sky-100 hover:rounded-lg bg-gray-100">
+                      <td class="p-3 px-5">
+                          <span class="bg-transparent border-b-2 border-gray-300 py-2 cursor-pointer hover:text-sky-500 font-semibold">{{expense.owner.username}}</span>
+                      </td>
+                      <td class="p-3 px-5">
+                          <span class="bg-transparent border-b-2 border-gray-300 py-2">{{expense.amount}}</span>
+                      </td>
+                      <td class="p-3 px-5 pl-8">
+                          <span class="bg-transparent border-b-2 border-gray-300 py-2">{{expense.exepnse_type}}</span>
+                      </td>
+                      <td class="p-3 px-5 pl-8">
+                        <span class="bg-transparent border-b-2 border-gray-300 py-2">{{expense.added_at}}</span>
+                    </td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+  
+      </div>
+  </div>
+</div>
+
+{% endblock %}
