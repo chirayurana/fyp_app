@@ -16,7 +16,7 @@
   <div class="flex flex-wrap items-center justify-between text-white gap-y-4">
     <a href="#"
       class="mr-4 ml-2 block cursor-pointer py-1.5 font-sans text-xl font-semibold leading-relaxed tracking-normal text-inherit antialiased">
-      All Exepense Transactions
+      All budget Transactions
     </a>
     <div class="flex gap-1 ml-auto md:mr-4">
       <button
@@ -44,7 +44,7 @@
         </span>
       </button>
     </div>
-    <div class="relative flex w-full gap-2 md:w-max">
+    <div class="relative flex gap-2 md:w-max">
       <div class="relative h-10 w-full min-w-[288px]">
         <input type="search"
           class="peer h-full w-full rounded-[7px] border border-white border-t-transparent bg-white px-3 py-2.5 pr-20 font-sans text-sm font-normal  !text-white outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-white focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
@@ -62,43 +62,73 @@
     </div>
   </div>
 </nav>
-    <div class="text-gray-900 bg-tran mt-12">
-            <table class="w-full text-md bg-[#F8F9FD]mb-4 shadow" style="text-align: left;">
-                <tbody>
-                  <tr class="text-[#1c1b1b] border-b-black">
-                    <th class="text-left p-3 px-5 text-xl">User</th>
-                    <th class="text-left p-3 px-5 text-xl">Expense Amount</th>
-                    <th class="text-left p-3 px-5 text-xl">Expense Type</th>
-                    <th class="text-left p-3 px-5 text-xl">Added at</th>
-                    <th class="text-left p-3 px-5 text-xl">Budget</th>
-                    <th></th>
-                  </tr>
-                  {% for expense in expenses %}
-                    <tr class="border-2 hover:bg-blue-300 bg-[#b7cce7] transition duration-300 hover:scale-105 hover:rounded-[8px] text-black hover:text-white w-full border-b-gray-300 hover:text-">
-                      <td class="p-3 px-5 hover:text-black">
-                        <span class="bg-transparent  py-2 cursor-pointer hover:text-black font-semibold">{{ expense.owner.username }}</span>
-                      </td>
-                      <td class="p-3 px-5 text-center ">
-                        <span class="bg-transparent py-2">{{ expense.amount }}</span>
-                      </td>
-                      <td class="p-3 px-5 text-center items-center ">
-                        <span class="bg-transparent  py-2 ">{{ expense.expense_type }}</span>
-                      </td>
-                      <td class="p-3 px-5 text-center items-center ">
-                        <span class="bg-transparent py-2">{{ expense.added_at }}</span>
-                      </td>
-                      <td class="p-3 px-5 text-center ">
-                        <span class="bg-transparentpy-2">{{ expense.budget.name }}</span>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-              
-            </table>
-    
-    </div>
+<div class="gap-y-4">
+  <div class="text-gray-900  mt-12 flex gap-x-4">
+    <table class="w-half text-md bg-[#F8F9FD] mb-4 shadow" style="text-align: left;">
+      <tbody>
+        <tr class="text-[#1c1b1b] border-b-black h-16">
+          <th class="text-left p-3 px-5 text-xl">User</th>
+          <th class="text-left p-3 px-5 text-xl">Budget</th>
+          <th class="text-left p-3 px-5 text-xl">Max Limit</th>
+          <th class="text-left p-3 px-5 text-xl">Current Spent</th>
+          <th class="text-left p-3 px-5 text-xl">Added at</th>
+          <th></th>
+        </tr>
+        {% for budget in budgets %}
+          <tr class="border-2 hover:bg-blue-300 bg-[#b7cce7] transition duration-300 hover:scale-105 hover:rounded-[8px] text-black hover:text-white w-full border-b-gray-300 hover:text-">
+            <td class="p-3 px-5 hover:text-black">
+              <span class="bg-transparent  py-2 cursor-pointer hover:text-black font-semibold">{{ budget.owner.username }}</span>
+            </td>
+            <td class="p-3 px-5 text-start">
+              <span class="bg-transparent py-2">{{ budget.name }}</span>
+            </td>
+            <td class="p-3 px-5 text-start">
+              <span class="bg-transparent  py-2 ">{{ budget.max_limit }}</span>
+            </td>
+            <td class="p-3 px-5 text-center">
+              <span class="bg-transparent py-2">{{ budget.current_spent }}</span>
+            </td>
+            <td class="p-3 px-5 text-center">
+              <span class="bg-transparent py-2">{{ budget.added_at }}</span>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="text-gray-900 bg-tran mt-12 flex gap-x-4">
+    <table class="table-fixed text-md bg-[#F8F9FD] mb-4 shadow" style="text-align: left;">
+      <tbody>
+        <tr class="text-[#1c1b1b] border-b-black">
+          <th class="text-left p-3 px-5 text-xl">User</th>
+          <th class="text-left p-3 px-5 text-xl">Subscription</th>
+          <th class="text-left p-3 px-5 text-xl">Amount</th>
+          <th class="text-left p-3 px-5 text-xl">Added at</th>
+          <th></th>
+        </tr>
+        {% for subscription in subscriptions %}
+          <tr class="table-fixed h-16 border-2 hover:bg-blue-300 bg-[#b7cce7] transition duration-300 hover:scale-105 hover:rounded-[8px] text-black hover:text-white w-full border-b-gray-300 hover:text-">
+            <td class="p-3 px-5 hover:text-black">
+              <span class="bg-transparent  py-2 cursor-pointer hover:text-black font-semibold">{{ subscription.owner.username }}</span>
+            </td>
+            <td class="p-3 px-5 text-center">
+              <span class="bg-transparent py-2">{{ subscription.name }}</span>
+            </td>
+            <td class="p-3 px-5 text-start">
+              <span class="bg-transparent py-2">{{ subscription.amount }}</span>
+            </td>
+            <td class="p-3 px-5 text-start">
+              <span class="bg-transparent py-2">{{ subscription.added_at }}</span>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 
-
+<div class="flex flex-row">
+  
+</div>
+</div>
 {% endblock %}

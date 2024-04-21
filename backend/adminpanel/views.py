@@ -2,7 +2,7 @@ from django.shortcuts import render , redirect
 from django.contrib.auth import authenticate , login , logout
 from django.contrib.auth.decorators import login_required
 from accounts.models import CustomUser
-from api.models import Income , Expense
+from api.models import Income , Expense , Budget , Subscription
 from random import randint
 
 @login_required(login_url="/login")
@@ -19,6 +19,8 @@ def admin_panel_home_page_view(request):
 
 
 def users_page_view(request):
+  if request.method == "DELETE":
+    pass
   content = {
     "users" : CustomUser.objects.all()
   }
@@ -47,3 +49,12 @@ def expenses_view(request):
 
 def incomes_view(request):
   return render(request , 'incomes.html' , {"incomes":Income.objects.all()})
+
+
+def budget_subscriptions_view(request):
+  content = {
+    "budgets" : Budget.objects.all(),
+    "subscriptions" : Subscription.objects.all()
+  }
+  print(content)
+  return render(request , "budget-subscriptions.html" , content)

@@ -69,8 +69,7 @@
                     <th class="text-left p-3 px-5 text-xl">User</th>
                     <th class="text-left p-3 px-5 text-xl">income Amount</th>
                     <th class="text-left p-3 px-5 text-xl">income Type</th>
-                    <th class="text-left p-3 px-5 text-xl">Date</th>
-                    <th class="text-left p-3 px-5 text-xl">Budget</th>
+                    <th class="text-left p-3 px-5 text-xl">Added at</th>
                     <th></th>
                   </tr>
                   {% for income in incomes %}
@@ -78,17 +77,14 @@
                       <td class="p-3 px-5 hover:text-black">
                         <span class="bg-transparent  py-2 cursor-pointer hover:text-black font-semibold">{{ income.owner.username }}</span>
                       </td>
-                      <td class="p-3 px-5 text-center ">
+                      <td class="p-3 px-5 text-start">
                         <span class="bg-transparent py-2">{{ income.amount }}</span>
                       </td>
-                      <td class="p-3 px-5 text-center items-center ">
+                      <td class="p-3 px-5 text-start">
                         <span class="bg-transparent  py-2 ">{{ income.income_type }}</span>
                       </td>
-                      <td class="p-3 px-5 text-center items-center ">
+                      <td class="p-3 px-5 text-start">
                         <span class="bg-transparent py-2">{{ income.added_at }}</span>
-                      </td>
-                      <td class="p-3 px-5 text-center ">
-                        <span class="bg-transparentpy-2">{{ income.budget }}</span>
                       </td>
                     </tr>
                   {% endfor %}
