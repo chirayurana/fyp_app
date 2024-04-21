@@ -11,7 +11,7 @@ def admin_panel_home_page_view(request):
     "total_users" : CustomUser.objects.all().count(),
     "total_transactions" : Income.objects.all().count() + Expense.objects.all().count(),
     "total_feedback" : 0,
-    "server_load" : randint(0,15),
+    "database_status" : "Connected",
     "latest_expenses" : Expense.objects.order_by('-added_at')[:8],
     "latest_incomes" : Income.objects.order_by('-added_at')[:8]
   }
@@ -19,8 +19,12 @@ def admin_panel_home_page_view(request):
 
 
 def users_page_view(request):
-  if request.method == "DELETE":
-    pass
+  if request.method == "POST":
+    method = request.POST.get('method')
+    if method == "DELETE":
+      user_id = request.POST.get('user_id')
+      target_user = CustomUser.objects.get(id=int(user_id))
+      target_user.delete()
   content = {
     "users" : CustomUser.objects.all()
   }
