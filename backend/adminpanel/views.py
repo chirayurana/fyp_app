@@ -24,7 +24,8 @@ def users_page_view(request):
     if method == "DELETE":
       user_id = request.POST.get('user_id')
       target_user = CustomUser.objects.get(id=int(user_id))
-      target_user.delete()
+      if target_user.is_staff == False:
+        target_user.delete()
     elif method == "POST":
       search_keyword = request.POST.get('search_keyword')
       content = {
