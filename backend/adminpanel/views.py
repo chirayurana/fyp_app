@@ -17,7 +17,7 @@ def admin_panel_home_page_view(request):
   }
   return render(request , "index.html" , content)
 
-
+@login_required(login_url="/login")
 def users_page_view(request):
   if request.method == "POST":
     method = request.POST.get('method')
@@ -25,6 +25,12 @@ def users_page_view(request):
       user_id = request.POST.get('user_id')
       target_user = CustomUser.objects.get(id=int(user_id))
       target_user.delete()
+    elif method == "POST":
+      search_keyword = request.POST.get('search_keyword')
+      content = {
+        "users" : CustomUser.objects.all().filter(username__icontains=search_keyword)
+      }
+      return render(request , "users.html" , content)
   content = {
     "users" : CustomUser.objects.all()
   }
@@ -49,10 +55,23 @@ def data_view(request):
   return render(request , 'data.html')
 
 def expenses_view(request):
-  return render(request , 'expenses.html' , {"expenses" : Expense.objects.all()})
+  content = {"expenses" : Expense.objects.all()}
+  if request.method == 'POST':
+    search_keyword = request.POST.get('search_keyword')
+    content = {
+      "expenses" : Expense.objects.all().filter(expense_type__icontains=search_keyword)
+    }
+  return render(request , 'expenses.html' , content)
 
 def incomes_view(request):
-  return render(request , 'incomes.html' , {"incomes":Income.objects.all()})
+  content = {"incomes" :Income.objects.all()}
+  if request.method == 'POST':
+    search_keyword = request.POST.get('search_keyword')
+    content = {
+      "incomes" : Income.objects.all().filter(income_type__icontains=search_keyword)
+    }
+    print(content)
+  return render(request , 'incomes.html' , content)
 
 
 def budget_subscriptions_view(request):
@@ -60,5 +79,10 @@ def budget_subscriptions_view(request):
     "budgets" : Budget.objects.all(),
     "subscriptions" : Subscription.objects.all()
   }
-  print(content)
+  if request.method == 'POST':
+    search_keyword = request.POST.get('search_keyword')
+    content = {
+      "budgets" : Budget.objects.all().filter(name__icontains=search_keyword),
+      "subscriptions" : Subscription.objects.all().filter(name__icontains=search_keyword)
+    }
   return render(request , "budget-subscriptions.html" , content)
