@@ -33,6 +33,11 @@ class Budget(BaseBudget):
     def dict(self):
         base_dict = super().dict()
         return base_dict
+    
+    def save(self, *args, **kwargs):
+       self.owner.number_of_budgets += 1
+       self.owner.save()
+       super().save(*args, **kwargs)
 
 
 class Subscription(BaseBudget):
@@ -52,6 +57,12 @@ class Subscription(BaseBudget):
             'renewal_after': self.renewal_after
         })
         return base_dict
+    
+    
+    def save(self, *args, **kwargs):
+       self.owner.number_of_subscriptions += 1
+       self.owner.save()
+       super().save(*args, **kwargs)
 
 class Transaction(models.Model):
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

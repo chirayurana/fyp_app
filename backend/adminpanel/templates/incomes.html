@@ -2,18 +2,18 @@
 {% block Content %}
 <div class="p-4 sm:ml-64">
        
+    <h1 class="text-3xl font-semibold">All Income Transactions</h1>
   <!-- component -->
-  <div class="text-gray-900 bg-green-200 mt-2 rounded-lg">
-      <div class="p-4 flex">
-          <h1 class="text-3xl font-semibold">All Income Transactions</h1>
+  <div class="text-gray-900  bg-blue-200 mt-4 rounded-lg">
+      <div class="p-2 flex">
       </div>
       <div class="px-3 py-4 flex justify-center">
           <table class="w-full text-md bg-white shadow-md rounded mb-4">
               <tbody>
                   <tr class="border-b">
-                      <th class="text-left p-3 px-5">income Owner</th>
-                      <th class="text-left p-3 px-2">income Amount</th>
-                      <th class="text-left p-3 px-8">income Type</th>
+                      <th class="text-left p-3 px-5 text-xl">Income Owner</th>
+                      <th class="text-left p-3 px-2">Amount</th>
+                      <th class="text-left p-3 px-8">Type</th>
                       <th class="text-left p-3 px-5">Added at</th>
                       <th></th>
                   </tr>
@@ -26,7 +26,7 @@
                           <span class="bg-transparent border-b-2 border-gray-300 py-2">{{income.amount}}</span>
                       </td>
                       <td class="p-3 px-5 pl-8">
-                          <span class="bg-transparent border-b-2 border-gray-300 py-2">{{income.exepnse_type}}</span>
+                          <span class="bg-transparent border-b-2 border-gray-300 py-2">{{income.income_type}}</span>
                       </td>
                       <td class="p-3 px-5 pl-8">
                         <span class="bg-transparent border-b-2 border-gray-300 py-2">{{income.added_at}}</span>
