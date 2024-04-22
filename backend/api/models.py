@@ -90,7 +90,7 @@ class Income(Transaction):
         ('Other', 'Other'),
     )
 
-    income_type = models.CharField(max_length=200)
+    income_type = models.CharField(max_length=200 , null=True)
     tags = models.CharField(max_length=200 , null=True)
 
     def save(self, *args, **kwargs):
