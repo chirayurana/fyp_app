@@ -4,13 +4,18 @@ import com.chirayu.financeapp.SaveAppApplication
 import com.chirayu.financeapp.data.repository.BudgetRepository
 import com.chirayu.financeapp.model.entities.Budget
 import com.chirayu.financeapp.model.entities.Movement
+import com.chirayu.financeapp.model.entities.mapToRemoteBudget
 import com.chirayu.financeapp.model.enums.AddToBudgetResult
+import com.chirayu.financeapp.network.data.NetworkResult
+import com.chirayu.financeapp.network.models.RemoteBudget
+import com.chirayu.financeapp.network.models.mapToBudget
+import com.chirayu.financeapp.network.repository.RemoteBudgetRepository
 
 object BudgetUtil {
-    private lateinit var budgetsRepository: BudgetRepository
+    private lateinit var budgetsRepository: RemoteBudgetRepository
 
     fun init(application: SaveAppApplication) {
-        budgetsRepository = application.budgetRepository
+        budgetsRepository = application.remoteBudgetRepository
     }
 
     suspend fun tryAddMovementToBudget(m: Movement, force: Boolean = false): AddToBudgetResult {
@@ -18,7 +23,8 @@ object BudgetUtil {
             return AddToBudgetResult.SUCCEEDED
         }
 
-        val budget: Budget? = budgetsRepository.getById(m.budgetId!!)
+        val result = budgetsRepository.getById(m.budgetId!!)
+        val budget: Budget? = if(result is NetworkResult.Success) result.data.mapToBudget() else null
         if (budget == null) {
             m.budgetId = 0
             return if (force) AddToBudgetResult.SUCCEEDED else AddToBudgetResult.NOT_EXISTS
@@ -35,7 +41,7 @@ object BudgetUtil {
         }
 
         budget.used += m.amount
-        budgetsRepository.update(budget)
+        budgetsRepository.update(budget.mapToRemoteBudget())
 
         return AddToBudgetResult.SUCCEEDED
     }
@@ -45,10 +51,11 @@ object BudgetUtil {
             return
         }
 
-        val budget: Budget? = budgetsRepository.getById(m.budgetId!!)
+        val result = budgetsRepository.getById(m.budgetId!!)
+        val budget: Budget? = if(result is NetworkResult.Success) result.data.mapToBudget() else null
         budget ?: return
 
         budget.used -= m.amount
-        budgetsRepository.update(budget)
+        budgetsRepository.update(budget.mapToRemoteBudget())
     }
 }

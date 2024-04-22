@@ -16,6 +16,7 @@ import com.chirayu.financeapp.R
 import com.chirayu.financeapp.SaveAppApplication
 import com.chirayu.financeapp.databinding.FragmentBudgetsBinding
 import com.chirayu.financeapp.model.entities.Budget
+import com.chirayu.financeapp.model.entities.mapToRemoteBudget
 import com.chirayu.financeapp.model.enums.Currencies
 import com.chirayu.financeapp.model.taggeditems.TaggedBudget
 import com.chirayu.financeapp.util.CustomRecyclerDecorator
@@ -146,13 +147,13 @@ class BudgetsFragment : Fragment() {
             taggedBudget.tagId
         )
         lifecycleScope.launch {
-            app.budgetRepository.delete(budget)
+            app.remoteBudgetRepository.delete(budget.mapToRemoteBudget())
         }
 
         Snackbar.make(binding.budgetsScrollView, R.string.budget_deleted, Snackbar.LENGTH_SHORT)
             .setAction(R.string.undo) {
                 lifecycleScope.launch {
-                    app.budgetRepository.insert(budget)
+                    app.remoteBudgetRepository.insert(budget.mapToRemoteBudget())
                 }
             }
             .setAnchorView(requireActivity().findViewById(R.id.bottomAppBar))

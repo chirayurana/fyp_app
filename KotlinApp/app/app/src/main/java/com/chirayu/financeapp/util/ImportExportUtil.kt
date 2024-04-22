@@ -6,6 +6,10 @@ import com.chirayu.financeapp.SaveAppApplication
 import com.chirayu.financeapp.model.entities.Budget
 import com.chirayu.financeapp.model.entities.Movement
 import com.chirayu.financeapp.model.entities.Subscription
+import com.chirayu.financeapp.model.entities.mapToRemoteBudget
+import com.chirayu.financeapp.model.entities.mapToTaggedBudget
+import com.chirayu.financeapp.network.data.NetworkResult
+import com.chirayu.financeapp.network.models.mapToBudget
 import com.chirayu.financeapp.util.StringUtil.toBudgetOrNull
 import com.chirayu.financeapp.util.StringUtil.toMovementOrNull
 import com.chirayu.financeapp.util.StringUtil.toSubscriptionOrNull
@@ -158,7 +162,13 @@ object ImportExportUtil {
     }
 
     private fun exportBudgets(writer: BufferedWriter, app: SaveAppApplication) {
-        val budgets = runBlocking { app.budgetRepository.allBudgets.first() }
+        val budgets = runBlocking { val result = app.remoteBudgetRepository.getAll()
+            if(result is NetworkResult.Success) {
+                result.data.map {
+                    it.mapToBudget().mapToTaggedBudget()
+                }
+            } else emptyList()
+        }
 
         writer.write(app.getString(R.string.budgets_export_header))
         writer.newLine()
@@ -259,10 +269,10 @@ object ImportExportUtil {
             }
             app.applicationScope.launch {
                 addBudgets.forEach {
-                    app.budgetRepository.insert(it)
+                    app.remoteBudgetRepository.insert(it.mapToRemoteBudget())
                 }
                 updateBudgets.forEach {
-                    app.budgetRepository.update(it)
+                    app.remoteBudgetRepository.update(it.mapToRemoteBudget())
                 }
             }
         } catch (_: Exception) {

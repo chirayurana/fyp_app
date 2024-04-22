@@ -49,7 +49,7 @@ class BudgetsDropdownAdapter(
             if (budget != null) {
                 viewHolder.name.text = budget.name
                 viewHolder.endDate.text = budget.to.toString()
-                viewHolder.pill.setColorFilter(ContextCompat.getColor(context, budget.tagColor))
+//                viewHolder.pill.setColorFilter(ContextCompat.getColor(context, budget.tagColor))
             }
         }
 

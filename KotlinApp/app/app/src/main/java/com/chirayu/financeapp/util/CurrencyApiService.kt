@@ -13,6 +13,8 @@ import com.chirayu.financeapp.data.repository.MovementRepository
 import com.chirayu.financeapp.data.repository.SubscriptionRepository
 import com.chirayu.financeapp.model.CurrencyApiResponse
 import com.chirayu.financeapp.model.enums.Currencies
+import com.chirayu.financeapp.network.data.NetworkResult
+import com.chirayu.financeapp.network.repository.RemoteBudgetRepository
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.flow.first
@@ -45,7 +47,7 @@ object CurrencyUtil {
 
     private lateinit var movementRepository: MovementRepository
     private lateinit var subscriptionRepository: SubscriptionRepository
-    private lateinit var budgetRepository: BudgetRepository
+    private lateinit var budgetRepository: RemoteBudgetRepository
 
     private lateinit var ratesStore: DataStore<Preferences>
 
@@ -59,7 +61,7 @@ object CurrencyUtil {
         ratesStore = application.ratesStore
         movementRepository = application.movementRepository
         subscriptionRepository = application.subscriptionRepository
-        budgetRepository = application.budgetRepository
+        budgetRepository = application.remoteBudgetRepository
     }
 
     suspend fun init() {
@@ -99,10 +101,12 @@ object CurrencyUtil {
                 it.amount *= rate
                 subscriptionRepository.update(it)
             }
-            budgetRepository.getAll().forEach {
-                it.max *= rate
-                it.used *= rate
-                budgetRepository.update(it)
+            val allBudgets = budgetRepository.getAll()
+            if(allBudgets is NetworkResult.Success) {
+                allBudgets.data.forEach {
+                    val budget = it.copy(maxLimit = it.maxLimit*rate, currentSpent = it.currentSpent!!*rate)
+                    budgetRepository.update(budget)
+                }
             }
 
             StatsUtil.applyRateToAll(context, rate)

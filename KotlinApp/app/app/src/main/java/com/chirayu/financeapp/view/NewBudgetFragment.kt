@@ -13,8 +13,11 @@ import com.chirayu.financeapp.MainActivity
 import com.chirayu.financeapp.R
 import com.chirayu.financeapp.SaveAppApplication
 import com.chirayu.financeapp.databinding.FragmentNewBudgetBinding
+import com.chirayu.financeapp.model.entities.Budget
 import com.chirayu.financeapp.model.entities.Tag
 import com.chirayu.financeapp.model.enums.Currencies
+import com.chirayu.financeapp.network.data.NetworkResult
+import com.chirayu.financeapp.network.models.mapToBudget
 import com.chirayu.financeapp.view.adapters.TagsDropdownAdapter
 import com.chirayu.financeapp.view.viewmodels.NewBudgetViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -69,7 +72,13 @@ class NewBudgetFragment : Fragment() {
         }
 
         val application = requireActivity().application as SaveAppApplication
-        val budget = runBlocking { application.budgetRepository.getById(itemId) } ?: return
+        val budget = runBlocking {
+            val result = application.remoteBudgetRepository.getById(itemId)
+            if(result is NetworkResult.Success){
+                result.data.mapToBudget()
+            }else
+                null
+        } ?: return
 
         viewModel.editingBudget = budget
         viewModel.setIsUsedInputVisible(true)

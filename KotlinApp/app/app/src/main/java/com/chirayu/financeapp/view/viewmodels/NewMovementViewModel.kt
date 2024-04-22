@@ -15,10 +15,13 @@ import com.chirayu.financeapp.SaveAppApplication
 import com.chirayu.financeapp.model.entities.Movement
 import com.chirayu.financeapp.model.entities.Subscription
 import com.chirayu.financeapp.model.entities.Tag
+import com.chirayu.financeapp.model.entities.mapToTaggedBudget
 import com.chirayu.financeapp.model.enums.AddToBudgetResult
 import com.chirayu.financeapp.model.enums.Currencies
 import com.chirayu.financeapp.model.enums.RenewalType
 import com.chirayu.financeapp.model.taggeditems.TaggedBudget
+import com.chirayu.financeapp.network.data.NetworkResult
+import com.chirayu.financeapp.network.models.mapToBudget
 import com.chirayu.financeapp.util.BudgetUtil
 import com.chirayu.financeapp.util.CurrencyUtil
 import com.chirayu.financeapp.util.SettingsUtil
@@ -72,7 +75,12 @@ class NewMovementViewModel(application: Application) : AndroidViewModel(applicat
     init {
         viewModelScope.launch {
             tags.value = saveAppApplication.tagRepository.allTags.first().toTypedArray()
-            budgets.value = saveAppApplication.budgetRepository.allBudgets.first().toTypedArray()
+            val result = saveAppApplication.remoteBudgetRepository.getAll()
+            if(result is NetworkResult.Success) {
+                budgets.value = result.data.map {
+                    it.mapToBudget().mapToTaggedBudget()
+                }.toTypedArray()
+            }
         }
     }
 
@@ -160,9 +168,9 @@ class NewMovementViewModel(application: Application) : AndroidViewModel(applicat
         }
 
         _budget = value
-        _tag = tags.value?.first { t -> t.id == value?.tagId }
+//        _tag = tags.value?.first { t -> t.id == value?.tagId }
         notifyPropertyChanged(BR.budget)
-        notifyPropertyChanged(BR.tag)
+//        notifyPropertyChanged(BR.tag)
     }
 
     @Bindable

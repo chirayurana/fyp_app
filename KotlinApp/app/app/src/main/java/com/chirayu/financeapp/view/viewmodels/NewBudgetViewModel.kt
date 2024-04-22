@@ -15,6 +15,7 @@ import com.chirayu.financeapp.SaveAppApplication
 import com.chirayu.financeapp.model.entities.Budget
 import com.chirayu.financeapp.model.entities.Tag
 import com.chirayu.financeapp.model.enums.Currencies
+import com.chirayu.financeapp.network.models.RemoteBudget
 import com.chirayu.financeapp.util.CurrencyUtil
 import com.chirayu.financeapp.util.SettingsUtil
 import com.google.android.material.snackbar.Snackbar
@@ -26,7 +27,9 @@ import java.time.LocalDate
 class NewBudgetViewModel(application: Application) : AndroidViewModel(application), Observable {
     private val saveAppApplication = application as SaveAppApplication
 
-    private val budgetRepository = saveAppApplication.budgetRepository
+    private val budgetRepository = saveAppApplication.remoteBudgetRepository
+//    private val remoteBudgetRepository = saveAppApplication.remoteBudgetRepository
+
 
     private val callbacks: PropertyChangeRegistry = PropertyChangeRegistry()
 
@@ -210,12 +213,21 @@ class NewBudgetViewModel(application: Application) : AndroidViewModel(applicatio
             val updatedAmount = updateToDefaultCurrency(amount)
             val updatedUsed = updateToDefaultCurrency(used)
 
-            val budget = Budget(
-                0, updatedAmount, updatedUsed, _name, _fromDate, _toDate, _tag?.id ?: 0
+//            val budget = Budget(
+//                0, updatedAmount, updatedUsed, _name, _fromDate, _toDate, _tag?.id ?: 0
+//            )
+            val budget = RemoteBudget(
+                editingBudget?.id,
+                _name,
+                updatedAmount,
+                updatedUsed,
+                _toDate.toString(),
+                    null,
+                _fromDate.toString()
             )
 
             if (editingBudget != null) {
-                budget.id = editingBudget!!.id
+//                budget.id = editingBudget!!.id
                 budgetRepository.update(budget)
             } else {
                 budgetRepository.insert(budget)

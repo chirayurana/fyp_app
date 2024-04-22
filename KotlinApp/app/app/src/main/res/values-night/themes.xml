@@ -1,4 +1,3 @@
-
 <resources>
     <!-- Base application theme. -->
     <style name="Theme.SaveApp" parent="Theme.Material3.Dark.NoActionBar">
@@ -14,5 +13,10 @@
         <item name="colorOnPrimaryContainer">@color/emerald_200</item>
         <item name="colorSecondaryContainer">@color/emerald_900</item>
         <item name="colorSurfaceContainerHighest">@color/emerald_100</item>
+    </style>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.SaveApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
 </resources>

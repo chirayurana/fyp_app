@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="vm"
+            type="com.chirayu.financeapp.view.viewmodels.SignupViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.SignupFragment">
+
+
+        <TextView
+            android:id="@+id/sign_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_marginStart="40dp"
+            android:text="@string/sign_up"
+            android:textAppearance="?attr/textAppearanceHeadlineMedium"
+            android:textColor="?attr/colorPrimaryVariant" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/signupUsernameInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sign_up"
+            android:layout_marginTop="50dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:hint="@string/enter_your_username">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/signupUsernameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@={vm.username}"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/signupUsernamePasswordInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/signupUsernameInput"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+
+            android:hint="@string/enter_your_password">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/signupUsernamePasswordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textPassword"
+                android:text="@={vm.password}"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/signupUsernameConfirmPasswordInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/signupUsernamePasswordInput"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:hint="@string/confirm_your_password">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/signupUsernameConfirmPasswordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textPassword"
+                android:text="@={vm.confirmPassword}"
+                 />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/signupButton"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/signupUsernameConfirmPasswordInput"
+            android:layout_alignEnd="@id/signupUsernameConfirmPasswordInput"
+            android:layout_marginTop="20dp"
+            android:text="@string/sign_up" />
+
+        <Button
+            android:id="@+id/moveToLoginButton"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/already_have_an_account_login" />
+
+
+    </RelativeLayout>
+</layout>

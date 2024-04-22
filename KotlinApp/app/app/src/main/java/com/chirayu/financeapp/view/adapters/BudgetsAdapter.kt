@@ -56,8 +56,8 @@ class BudgetsAdapter(
             dateFromItemView.text = String.format(from, item.from.toString())
             dateToItemView.text = String.format(to, item.to.toString())
             tagItemView.text = item.tagName
-            tagItemView.setIconTintResource(item.tagColor)
-            tagItemView.setStrokeColorResource(item.tagColor)
+//            tagItemView.setIconTintResource(item.tagColor)
+//            tagItemView.setStrokeColorResource(item.tagColor)
             tagItemView.setOnClickListener {
                 Snackbar.make(
                     itemView.rootView.findViewById(R.id.containerView),

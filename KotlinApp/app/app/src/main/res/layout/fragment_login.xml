@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="vm"
+            type="com.chirayu.financeapp.view.viewmodels.LoginViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.LoginFragment">
+
+        <TextView
+            android:id="@+id/login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_marginStart="40dp"
+            android:text="@string/login"
+            android:textAppearance="?attr/textAppearanceHeadlineMedium"
+            android:textColor="?attr/colorPrimaryVariant" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/loginUsernameInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login"
+            android:layout_marginTop="50dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:hint="@string/enter_your_username">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/loginUsernameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@={vm.username}" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/loginUsernamePasswordInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/loginUsernameInput"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+
+            android:hint="@string/enter_your_password">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/loginUsernamePasswordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@={vm.password}"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/loginButton"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/loginUsernamePasswordInput"
+            android:layout_alignEnd="@id/loginUsernamePasswordInput"
+            android:layout_marginTop="20dp"
+            android:text="@string/login" />
+
+        <Button
+            android:id="@+id/logoutButton"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/loginButton"
+            android:layout_alignEnd="@id/loginUsernamePasswordInput"
+            android:layout_marginTop="20dp"
+            android:text="Log out" />
+
+        <Button
+            android:id="@+id/moveToSignupButton"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/create_an_account" />
+
+
+    </RelativeLayout>
+</layout>
