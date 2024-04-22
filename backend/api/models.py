@@ -46,6 +46,7 @@ class Subscription(BaseBudget):
     active = models.BooleanField(default=True )
     last_paid = models.DateField(auto_now_add=True)
     renewal_after = models.IntegerField(default=30)
+    subscription_type = models.CharField(max_length=200 , null=True)
 
     def __str__(self):
         return f"{self.owner} - {self.name}"
@@ -89,7 +90,8 @@ class Income(Transaction):
         ('Other', 'Other'),
     )
 
-    income_type = models.CharField(max_length=7, choices=INCOME_TYPES)
+    income_type = models.CharField(max_length=200)
+    tags = models.CharField(max_length=200 , null=True)
 
     def save(self, *args, **kwargs):
         self.owner.total_balance += self.amount
@@ -98,14 +100,8 @@ class Income(Transaction):
         super().save(*args, **kwargs)
 class Expense(Transaction):
     budget = models.ForeignKey(Budget, on_delete=models.CASCADE , blank=True , null=True)
-    EXPENSE_TYPES = (
-        ('Shopping', 'Shopping'),
-        ('Medical', 'Medical'),
-        ('Transportation', 'Transportation'),
-        ('Other', 'Other'),
-    )
-
-    expense_type = models.CharField(max_length=15, choices=EXPENSE_TYPES)
+    expense_type = models.CharField(max_length=100)
+    tags = models.CharField(max_length=200 , null=True)
 
 
     def save(self, *args, **kwargs):
