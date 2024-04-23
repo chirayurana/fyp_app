@@ -15,7 +15,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Subscription
-    fields = ['owner','amount','name','renewal_after','last_paid','date']
+    fields = ['owner','amount','name','renewal_after','last_paid','date' , 'subscription_type']
 
 
 class SubscriptionView(ModelViewSet):
