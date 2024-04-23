@@ -14,7 +14,6 @@ suspend fun <T> handleRemoteRequest(
         withContext(Dispatchers.IO) {
             val response = execute()
             val body = response.body()
-            Log.d("HandleRemoteRequest","response code ${response.code()}")
             if (response.isSuccessful && body != null) {
                 NetworkResult.Success(body)
             } else {

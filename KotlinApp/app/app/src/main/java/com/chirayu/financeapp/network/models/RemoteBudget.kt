@@ -20,5 +20,5 @@ fun RemoteBudget.mapToBudget() : Budget{
     val dateConverter = DateConverter()
     val from = if(date!= null) dateConverter.toDate(date) else LocalDate.now()
     val to = if(expiryAt!= null) dateConverter.toDate(expiryAt) else from
-    return Budget(id?: 0, maxLimit,currentSpent?: 0.0,name,from,to,0)
+    return Budget(id?: 0, maxLimit,currentSpent?: 0.0,name,from,to)
 }

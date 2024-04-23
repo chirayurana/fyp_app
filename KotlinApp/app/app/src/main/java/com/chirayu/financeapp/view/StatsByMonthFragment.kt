@@ -66,7 +66,7 @@ class StatsByMonthFragment : Fragment() {
                 viewModel.setType(checkedId == binding.byMonthExpensesButton.id)
             }
         }
-        binding. byMonthTypeToggle.check(binding.byMonthExpensesButton.id)
+        binding.byMonthTypeToggle.check(binding.byMonthExpensesButton.id)
 
         viewModel.onMovementsChangeCallback = { updateGraph() }
         binding.monthsPieChart.description.text = ""

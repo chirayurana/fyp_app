@@ -12,6 +12,8 @@ import com.chirayu.financeapp.SaveAppApplication
 import com.chirayu.financeapp.model.entities.Tag
 import com.chirayu.financeapp.model.statsitems.TagMovementsSum
 import com.chirayu.financeapp.model.taggeditems.TaggedMovement
+import com.chirayu.financeapp.network.models.RemoteIncome
+import com.chirayu.financeapp.network.models.mapToTaggedMovement
 import com.chirayu.financeapp.util.TagUtil
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -25,6 +27,7 @@ class StatsByTagViewModel(application: Application) : AndroidViewModel(applicati
     private val _tags: LiveData<List<Tag>> = _app.tagRepository.allTags.asLiveData()
 
     private var _movements: List<TaggedMovement> = listOf()
+    private var _incomes: List<RemoteIncome> = listOf()
 
     private val _tagSums: MutableMap<Int, Double> = mutableMapOf()
 
@@ -58,11 +61,17 @@ class StatsByTagViewModel(application: Application) : AndroidViewModel(applicati
                         _tagSums[it.id] = 0.0
                 }
             }
-            calculateSums(_isShowingExpenses.value!!)
+            viewModelScope.launch {
+                calculateSums(_isShowingExpenses.value!!)
+            }
         }
         _year.observeForever { value ->
             viewModelScope.launch {
-                _movements = _app.movementRepository.getAllTaggedByYear(value)
+                _movements = _app.movementRepository.getAllTaggedByYear(value.toInt()).map {
+                    val tag = _app.tagRepository.getByName(it.expenseType ?: "")
+                    it.mapToTaggedMovement(tag)
+                }
+                _incomes = _app.incomeRepository.getAllTaggedByYear(year.value!!.toInt())
                 _showEmptyMessage.value = _movements.isEmpty()
                 _tagSums.keys.forEach {
                     _tagSums[it] = 0.0
@@ -77,7 +86,11 @@ class StatsByTagViewModel(application: Application) : AndroidViewModel(applicati
                 application.getString(R.string.incomes_by_tag)
 
             viewModelScope.launch {
-                _movements = _app.movementRepository.getAllTaggedByYear(_year.value!!)
+                _movements = _app.movementRepository.getAllTaggedByYear(year.value!!.toInt()).map {
+                    val tag = _app.tagRepository.getByName(it.expenseType ?: "")
+                    it.mapToTaggedMovement(tag)
+                }
+                _incomes = _app.incomeRepository.getAllTaggedByYear(year.value!!.toInt())
                 _showEmptyMessage.value = _movements.isEmpty()
                 _tagSums.clear()
                 _tags.value?.forEach {
@@ -98,12 +111,18 @@ class StatsByTagViewModel(application: Application) : AndroidViewModel(applicati
         _isShowingExpenses.value = isExpenses
     }
 
-    private fun calculateSums(selectExpenses: Boolean) {
-        _movements.forEach {
-            if (selectExpenses xor TagUtil.incomeTagIds.contains(it.tagId)) {
+    private suspend fun calculateSums(selectExpenses: Boolean) {
+        if (selectExpenses) {
+            _movements.forEach {
                 _tagSums[it.tagId] = (_tagSums[it.tagId] ?: 0.0) + it.amount
             }
+        } else {
+            _incomes.forEach {
+                val tag = _app.tagRepository.getByName(it.incomeType)
+                _tagSums[tag?.id?: 0] = (_tagSums[tag?: 0] ?: 0.0) + it.amount
+            }
         }
+
         updateEntries(selectExpenses)
     }
 

@@ -146,7 +146,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/tags"
+                        android:text="@string/categories"
                         android:textAppearance="?attr/textAppearanceHeadline5" />
 
                     <TextView
@@ -189,7 +189,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/movements"
+                        android:text="@string/transactions"
                         android:textAppearance="?attr/textAppearanceHeadline5" />
 
                     <TextView

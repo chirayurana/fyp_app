@@ -1,13 +1,11 @@
 package com.chirayu.financeapp.util
 
 import com.chirayu.financeapp.SaveAppApplication
-import com.chirayu.financeapp.data.repository.BudgetRepository
 import com.chirayu.financeapp.model.entities.Budget
 import com.chirayu.financeapp.model.entities.Movement
 import com.chirayu.financeapp.model.entities.mapToRemoteBudget
 import com.chirayu.financeapp.model.enums.AddToBudgetResult
 import com.chirayu.financeapp.network.data.NetworkResult
-import com.chirayu.financeapp.network.models.RemoteBudget
 import com.chirayu.financeapp.network.models.mapToBudget
 import com.chirayu.financeapp.network.repository.RemoteBudgetRepository
 

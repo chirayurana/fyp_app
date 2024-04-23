@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/add_movement"
-        android:text="@string/movement"
+        android:text="@string/transaction"
         app:icon="@drawable/round_add_24"
         app:layout_anchor="@id/bottomAppBar" />
 

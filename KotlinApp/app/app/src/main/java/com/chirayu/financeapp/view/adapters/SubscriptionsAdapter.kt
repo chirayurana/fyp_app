@@ -9,11 +9,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.chirayu.financeapp.R
+import com.chirayu.financeapp.data.converters.DateConverter
 import com.chirayu.financeapp.model.enums.Currencies
 import com.chirayu.financeapp.model.enums.RenewalType
 import com.chirayu.financeapp.model.taggeditems.TaggedSubscription
+import com.chirayu.financeapp.network.models.RemoteSubscription
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
+import java.time.LocalDate
 
 class SubscriptionsAdapter(private val ctx: Context, private val currency: Currencies) :
     ListAdapter<TaggedSubscription, SubscriptionsAdapter.SubscriptionViewHolder>(
@@ -47,8 +50,6 @@ class SubscriptionsAdapter(private val ctx: Context, private val currency: Curre
         private val nextRenewalItemView =
             itemView.findViewById<TextView>(R.id.subscriptionNextRenewal)
 
-        private val renewalTypeItemView =
-            itemView.findViewById<TextView>(R.id.subscriptionRenewalType)
 
         private val tagItemView = itemView.findViewById<MaterialButton>(R.id.subscriptionTagButton)
 
@@ -56,7 +57,6 @@ class SubscriptionsAdapter(private val ctx: Context, private val currency: Curre
             amountItemView.text = String.format("%s %.2f", currency.toSymbol(), item.amount)
             descriptionItemView.text = item.description
             nextRenewalItemView.text = item.nextRenewal.toString()
-            renewalTypeItemView.text = getLocalizedRenewalType(item.renewalType)
             tagItemView.text = item.tagName
             tagItemView.setIconTintResource(item.tagColor)
             tagItemView.setStrokeColorResource(item.tagColor)
@@ -101,8 +101,7 @@ class SubscriptionsAdapter(private val ctx: Context, private val currency: Curre
             newItem: TaggedSubscription
         ): Boolean {
             return oldItem.description == newItem.description &&
-                    oldItem.amount == newItem.amount &&
-                    oldItem.renewalType == newItem.renewalType
+                    oldItem.amount == newItem.amount
         }
 
         override fun areItemsTheSame(

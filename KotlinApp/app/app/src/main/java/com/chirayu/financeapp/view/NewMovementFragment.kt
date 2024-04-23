@@ -1,6 +1,9 @@
 package com.chirayu.financeapp.view
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,16 +15,21 @@ import androidx.lifecycle.ViewModelProvider
 import com.chirayu.financeapp.MainActivity
 import com.chirayu.financeapp.R
 import com.chirayu.financeapp.SaveAppApplication
+import com.chirayu.financeapp.data.converters.DateConverter
 import com.chirayu.financeapp.databinding.FragmentNewMovementBinding
+import com.chirayu.financeapp.model.entities.Budget
 import com.chirayu.financeapp.model.entities.Tag
 import com.chirayu.financeapp.model.enums.Currencies
 import com.chirayu.financeapp.model.enums.RenewalType
 import com.chirayu.financeapp.model.taggeditems.TaggedBudget
+import com.chirayu.financeapp.network.data.NetworkResult
+import com.chirayu.financeapp.network.models.mapToMovement
 import com.chirayu.financeapp.view.adapters.BudgetsDropdownAdapter
 import com.chirayu.financeapp.view.adapters.RenewalDropdownAdapter
 import com.chirayu.financeapp.view.adapters.TagsDropdownAdapter
 import com.chirayu.financeapp.view.viewmodels.NewMovementViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import java.time.LocalDate
@@ -81,20 +89,34 @@ class NewMovementFragment : Fragment() {
         viewModel.setIsSubscriptionSwitchEnabled(false)
 
         if (isMovement) {
-            val movement = runBlocking { application.movementRepository.getById(itemId) } ?: return
+            val movement = runBlocking {
+                val result = application.movementRepository.getById(itemId)
+
+                if (result is NetworkResult.Success) {
+                    val tag = application.tagRepository.getByName(result.data.expenseType ?: "")
+                    result.data.mapToMovement(tag)
+                } else
+                    null
+            } ?: return
 
             viewModel.editingMovement = movement
             viewModel.setAmount(String.format("%.2f", movement.amount))
             viewModel.setDescription(movement.description)
             viewModel.setDate(movement.date)
         } else {
-            val sub = runBlocking { application.subscriptionRepository.getById(itemId) } ?: return
+            val sub = runBlocking {
+                val result = application.subscriptionRepository.getById(itemId)
+                if (result is NetworkResult.Success){
+                    result.data
+                }else {
+                    null
+                }
+            } ?: return
 
             viewModel.editingSubscription = sub
             viewModel.setAmount(String.format("%.2f", sub.amount))
-            viewModel.setDescription(sub.description)
-            viewModel.setDate(sub.creationDate)
-            viewModel.setRenewalType(sub.renewalType)
+            viewModel.setDescription(sub.name)
+            viewModel.setDate(DateConverter().toDate(sub.lastPaid?: LocalDate.now().toString()))
         }
     }
 
@@ -111,6 +133,19 @@ class NewMovementFragment : Fragment() {
             binding.budgetInput.editText?.clearFocus()
             viewModel.setBudget(null)
         }
+
+        binding.tagEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                viewModel.selectedTag = p0.toString()
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+        })
 
         setupTagPicker()
         setupBudgetPicker()
@@ -138,16 +173,16 @@ class NewMovementFragment : Fragment() {
                     viewModel.setTag(selection)
                 }
 
-                val tagId =
-                    if (viewModel.editingMovement != null) viewModel.editingMovement!!.tagId
-                    else if (viewModel.editingSubscription != null) viewModel.editingSubscription!!.tagId
-                    else 0
-
-                if (tagId != 0) {
-                    val i = it.indexOfFirst { tag -> tag.id == tagId }
-                    tagAutoComplete.setText(it[i].name, false)
-                    viewModel.setTag(it[i])
-                }
+//                val tagId =
+//                    if (viewModel.editingMovement != null) viewModel.editingMovement!!.tagId
+//                    else if (viewModel.editingSubscription != null) viewModel.editingSubscription!!.tagId
+//                    else 0
+//
+//                if (tagId != 0) {
+//                    val i = it.indexOfFirst { tag -> tag.id == tagId }
+//                    tagAutoComplete.setText(it[i].name, false)
+//                    viewModel.setTag(it[i])
+//                }
             }
         })
     }
@@ -167,17 +202,16 @@ class NewMovementFragment : Fragment() {
 
                 budgetAutoComplete.setAdapter(adapter)
                 budgetAutoComplete.setOnItemClickListener { parent, _, position, _ ->
-                    val selection = parent.adapter.getItem(position) as TaggedBudget
+                    val selection = parent.adapter.getItem(position) as Budget
                     viewModel.setBudget(selection)
                 }
 
                 val budgetId =
                     if (viewModel.editingMovement != null) viewModel.editingMovement!!.budgetId
-                    else if (viewModel.editingSubscription != null) viewModel.editingSubscription!!.budgetId
                     else 0
 
                 if (budgetId != 0) {
-                    val i = it.indexOfFirst { budget -> budget.budgetId == budgetId }
+                    val i = it.indexOfFirst { budget -> budget.id == budgetId }
                     budgetAutoComplete.setText(it[i].name, false)
                     viewModel.setBudget(it[i])
                 }

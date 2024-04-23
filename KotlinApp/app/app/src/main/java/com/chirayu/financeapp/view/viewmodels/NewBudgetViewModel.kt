@@ -28,7 +28,6 @@ class NewBudgetViewModel(application: Application) : AndroidViewModel(applicatio
     private val saveAppApplication = application as SaveAppApplication
 
     private val budgetRepository = saveAppApplication.remoteBudgetRepository
-//    private val remoteBudgetRepository = saveAppApplication.remoteBudgetRepository
 
 
     private val callbacks: PropertyChangeRegistry = PropertyChangeRegistry()
@@ -46,8 +45,6 @@ class NewBudgetViewModel(application: Application) : AndroidViewModel(applicatio
 
     private var _isUsedInputVisible: Boolean = false
 
-    val tags: MutableLiveData<Array<Tag>> = MutableLiveData<Array<Tag>>()
-
     val currencies: MutableLiveData<Array<Currencies>> =
         MutableLiveData<Array<Currencies>>(Currencies.values())
 
@@ -57,12 +54,6 @@ class NewBudgetViewModel(application: Application) : AndroidViewModel(applicatio
     var onUsedChanged: () -> Unit = { }
     var onNameChanged: () -> Unit = { }
     var onToDateChanged: () -> Unit = { }
-
-    init {
-        viewModelScope.launch {
-            tags.value = saveAppApplication.tagRepository.allTags.first().toTypedArray()
-        }
-    }
 
     // Bindings
     @Bindable

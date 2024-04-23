@@ -11,13 +11,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.chirayu.financeapp.R
+import com.chirayu.financeapp.model.entities.Budget
 import com.chirayu.financeapp.model.taggeditems.TaggedBudget
 
 class BudgetsDropdownAdapter(
     context: Context,
     layoutId: Int,
-    private val items: Array<TaggedBudget>
-) : ArrayAdapter<TaggedBudget>(context, layoutId, items),
+    private val items: Array<Budget>
+) : ArrayAdapter<Budget>(context, layoutId, items),
     Filterable {
 
     data class BudgetViewHolder(val name: TextView, val endDate: TextView, val pill: ImageView)
@@ -59,7 +60,7 @@ class BudgetsDropdownAdapter(
     override fun getFilter(): Filter {
         val filter: Filter = object : Filter() {
             override fun convertResultToString(resultValue: Any?): CharSequence {
-                return (resultValue as TaggedBudget).name
+                return (resultValue as Budget).name
             }
 
             // All budgets should always be visible. Do not filter them

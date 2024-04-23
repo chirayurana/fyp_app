@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.chirayu.financeapp.R
+import com.chirayu.financeapp.model.entities.Budget
 import com.chirayu.financeapp.model.enums.Currencies
 import com.chirayu.financeapp.model.taggeditems.TaggedBudget
 import com.google.android.material.button.MaterialButton
@@ -20,7 +21,7 @@ class BudgetsAdapter(
     private val from: String,
     private val to: String
 ) :
-    ListAdapter<TaggedBudget, BudgetsAdapter.BudgetViewHolder>(BudgetsComparator()) {
+    ListAdapter<Budget, BudgetsAdapter.BudgetViewHolder>(BudgetsComparator()) {
 
     override fun onBindViewHolder(holder: BudgetViewHolder, position: Int) {
         holder.bind(getItem(position))
@@ -30,7 +31,7 @@ class BudgetsAdapter(
         return BudgetViewHolder.create(parent, currency, from, to)
     }
 
-    fun getItemAt(position: Int): TaggedBudget {
+    fun getItemAt(position: Int): Budget {
         return getItem(position)
     }
 
@@ -51,17 +52,14 @@ class BudgetsAdapter(
         private val maxItemView = itemView.findViewById<TextView>(R.id.budgetMax)
 
         @SuppressLint("SetTextI18n")
-        fun bind(item: TaggedBudget) {
+        fun bind(item: Budget) {
             nameItemView.text = item.name
             dateFromItemView.text = String.format(from, item.from.toString())
             dateToItemView.text = String.format(to, item.to.toString())
-            tagItemView.text = item.tagName
-//            tagItemView.setIconTintResource(item.tagColor)
-//            tagItemView.setStrokeColorResource(item.tagColor)
             tagItemView.setOnClickListener {
                 Snackbar.make(
                     itemView.rootView.findViewById(R.id.containerView),
-                    item.tagName,
+                    item.name,
                     Snackbar.LENGTH_SHORT
                 ).setAnchorView(itemView.rootView.findViewById(R.id.bottomAppBar)).show()
             }
@@ -87,8 +85,8 @@ class BudgetsAdapter(
         }
     }
 
-    class BudgetsComparator : DiffUtil.ItemCallback<TaggedBudget>() {
-        override fun areContentsTheSame(oldItem: TaggedBudget, newItem: TaggedBudget): Boolean {
+    class BudgetsComparator : DiffUtil.ItemCallback<Budget>() {
+        override fun areContentsTheSame(oldItem: Budget, newItem: Budget): Boolean {
             return oldItem.name == newItem.name &&
                     oldItem.max == oldItem.max &&
                     oldItem.used == newItem.used &&
@@ -96,8 +94,8 @@ class BudgetsAdapter(
                     oldItem.to == newItem.to
         }
 
-        override fun areItemsTheSame(oldItem: TaggedBudget, newItem: TaggedBudget): Boolean {
-            return oldItem.budgetId == newItem.budgetId
+        override fun areItemsTheSame(oldItem: Budget, newItem: Budget): Boolean {
+            return oldItem.id == newItem.id
         }
     }
 }

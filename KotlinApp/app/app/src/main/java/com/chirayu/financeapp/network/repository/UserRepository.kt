@@ -8,6 +8,12 @@ import com.chirayu.financeapp.network.models.User
 
 class UserRepository(private val api : BackendAPI) {
 
+    suspend fun userDetails() : NetworkResult<List<User>> {
+        return handleRemoteRequest {
+            api.userDetails()
+        }
+    }
+
     suspend fun signup(user : User) : NetworkResult<User> {
         return handleRemoteRequest {
             api.signup(user)

@@ -100,8 +100,8 @@
     <string name="subscriptions_file_name">Subscriptions_%s</string>
     <string name="budgets_file_name">Budgets_%s</string>
     <string name="movements_export_header">ID,AMOUNT,DESCRIPTION,DATE,TAG_ID,BUDGET_ID</string>
-    <string name="subscriptions_export_header">ID,AMOUNT,DESCRIPTION,RENEWAL_TYPE,CREATION_DATE,LAST_PAID,NEXT_RENEWAL,TAG_ID,BUDGET_ID</string>
-    <string name="budgets_export_header">ID,MAX,USED,NAME,FROM,TO,TAG_ID</string>
+    <string name="subscriptions_export_header">ID,NAME,AMOUNT,RENEWAL_AFTER,LAST_PAID,SUBSCRIPTION_TYPE</string>
+    <string name="budgets_export_header">ID,MAX,USED,NAME,FROM,TO</string>
     <string name="movements_template">Movements_Template</string>
     <string name="subscriptions_template">Subscriptions_Template</string>
     <string name="budgets_template">Budgets_Template</string>
@@ -260,4 +260,14 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="add_income">Add Income</string>
+    <string name="username_is_empty">Username is empty</string>
+    <string name="password_is_empty">Password is empty</string>
+    <string name="confirm_password_is_empty">Confirm Password is empty</string>
+    <string name="password_don_t_match">Password don\'t match</string>
+    <string name="transaction">Transaction</string>
+    <string name="khutruke">Khutruke</string>
+    <string name="categories">Categories</string>
+    <string name="add_expennse">Add Expense</string>
+    <string name="transactions">Transactions</string>
 </resources>

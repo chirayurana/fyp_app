@@ -24,7 +24,7 @@
             app:exitAnim="@anim/fade" />
         <action
             android:id="@+id/action_homeFragment_to_newMovementFragment"
-            app:destination="@id/newMovementFragment"
+            app:destination="@id/movementFragment"
             app:enterAnim="@anim/slide_in_bottom_right"
             app:exitAnim="@anim/fade" />
     </fragment>
@@ -47,7 +47,7 @@
         android:label="HistoryFragment">
         <action
             android:id="@+id/action_historyFragment_to_newMovementFragment"
-            app:destination="@id/newMovementFragment"
+            app:destination="@id/movementFragment"
             app:enterAnim="@anim/slide_in_bottom_right"
             app:exitAnim="@anim/fade" />
     </fragment>
@@ -62,7 +62,7 @@
             app:exitAnim="@anim/fade" />
         <action
             android:id="@+id/action_budgetsFragment_to_newMovementFragment"
-            app:destination="@id/newMovementFragment"
+            app:destination="@id/movementFragment"
             app:enterAnim="@anim/slide_in_bottom_right"
             app:exitAnim="@anim/fade" />
     </fragment>
@@ -72,7 +72,7 @@
         android:label="StatsFragment">
         <action
             android:id="@+id/action_statsFragment_to_newMovementFragment"
-            app:destination="@id/newMovementFragment"
+            app:destination="@id/movementFragment"
             app:enterAnim="@anim/slide_in_bottom_right"
             app:exitAnim="@anim/fade" />
     </fragment>
@@ -122,4 +122,8 @@
             app:destination="@id/manageTagsFragment"
             app:exitAnim="@anim/slide_out_top_right" />
     </fragment>
+    <fragment
+        android:id="@+id/movementFragment"
+        android:name="com.chirayu.financeapp.view.MovementFragment"
+        android:label="MovementFragment" />
 </navigation>

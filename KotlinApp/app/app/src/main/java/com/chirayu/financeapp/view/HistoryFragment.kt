@@ -20,6 +20,7 @@ import com.chirayu.financeapp.SaveAppApplication
 import com.chirayu.financeapp.databinding.FragmentHistoryBinding
 import com.chirayu.financeapp.model.entities.Movement
 import com.chirayu.financeapp.model.entities.Tag
+import com.chirayu.financeapp.model.entities.mapToRemoteExpense
 import com.chirayu.financeapp.model.enums.Currencies
 import com.chirayu.financeapp.model.taggeditems.TaggedMovement
 import com.chirayu.financeapp.util.BudgetUtil
@@ -231,7 +232,7 @@ class HistoryFragment : Fragment() {
             taggedMovement.budgetId
         )
         lifecycleScope.launch {
-            app.movementRepository.delete(movement)
+            app.movementRepository.delete(movement.mapToRemoteExpense(""))
             BudgetUtil.removeMovementFromBudget(movement)
             viewModel.updateMovements()
             movement.amount *= -1
@@ -243,7 +244,8 @@ class HistoryFragment : Fragment() {
                 lifecycleScope.launch {
                     movement.amount *= -1
                     BudgetUtil.tryAddMovementToBudget(movement)
-                    app.movementRepository.insert(movement)
+                    val tag = app.tagRepository.getById(movement.id)
+                    app.movementRepository.insert(movement.mapToRemoteExpense(tag?.name?: ""))
                     viewModel.updateMovements()
                     StatsUtil.addMovementToStat(app, movement)
                 }

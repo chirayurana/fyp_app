@@ -46,7 +46,7 @@
                     android:layout_toEndOf="@id/add_movement_icon"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="@string/add_movement"
+                    android:text="@string/add_expennse"
                     android:textAppearance="?attr/textAppearanceHeadlineMedium"
                     android:textColor="?attr/colorPrimaryVariant" />
 
@@ -168,10 +168,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/budgetContainer"
-                android:hint="@string/tag_hint"
-                android:visibility="@{vm.budget == null ? View.VISIBLE : View.GONE}">
+                android:hint="@string/categories">
 
                 <AutoCompleteTextView
+                    android:id="@+id/tagEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="none" />

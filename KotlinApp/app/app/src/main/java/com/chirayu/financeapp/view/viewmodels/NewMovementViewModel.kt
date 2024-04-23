@@ -1,6 +1,7 @@
 package com.chirayu.financeapp.view.viewmodels
 
 import android.app.Application
+import android.util.Log
 import android.view.View
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
@@ -12,15 +13,17 @@ import com.chirayu.financeapp.BR
 import com.chirayu.financeapp.MainActivity
 import com.chirayu.financeapp.R
 import com.chirayu.financeapp.SaveAppApplication
+import com.chirayu.financeapp.model.entities.Budget
 import com.chirayu.financeapp.model.entities.Movement
 import com.chirayu.financeapp.model.entities.Subscription
 import com.chirayu.financeapp.model.entities.Tag
-import com.chirayu.financeapp.model.entities.mapToTaggedBudget
+import com.chirayu.financeapp.model.entities.mapToRemoteExpense
 import com.chirayu.financeapp.model.enums.AddToBudgetResult
 import com.chirayu.financeapp.model.enums.Currencies
 import com.chirayu.financeapp.model.enums.RenewalType
 import com.chirayu.financeapp.model.taggeditems.TaggedBudget
 import com.chirayu.financeapp.network.data.NetworkResult
+import com.chirayu.financeapp.network.models.RemoteSubscription
 import com.chirayu.financeapp.network.models.mapToBudget
 import com.chirayu.financeapp.util.BudgetUtil
 import com.chirayu.financeapp.util.CurrencyUtil
@@ -49,15 +52,16 @@ class NewMovementViewModel(application: Application) : AndroidViewModel(applicat
     private var _description: String = ""
     private var _date: LocalDate = LocalDate.now()
     private var _tag: Tag? = null
-    private var _budget: TaggedBudget? = null
+    private var _budget: Budget? = null
     private var _isSubscription: Boolean = false
     private var _renewalType: RenewalType = RenewalType.WEEKLY
 
     private var _isSubscriptionSwitchEnabled: Boolean = true
 
     val tags: MutableLiveData<Array<Tag>> = MutableLiveData<Array<Tag>>()
+    var selectedTag: String = ""
 
-    val budgets: MutableLiveData<Array<TaggedBudget>> = MutableLiveData<Array<TaggedBudget>>()
+    val budgets: MutableLiveData<Array<Budget>> = MutableLiveData<Array<Budget>>()
 
     val currencies: MutableLiveData<Array<Currencies>> =
         MutableLiveData<Array<Currencies>>(Currencies.values())
@@ -65,7 +69,7 @@ class NewMovementViewModel(application: Application) : AndroidViewModel(applicat
     val renewalTypes: MutableLiveData<Array<RenewalType>> =
         MutableLiveData<Array<RenewalType>>(RenewalType.values())
 
-    var editingSubscription: Subscription? = null
+    var editingSubscription: RemoteSubscription? = null
     var editingMovement: Movement? = null
 
     var onAmountChanged: () -> Unit = { }
@@ -74,11 +78,13 @@ class NewMovementViewModel(application: Application) : AndroidViewModel(applicat
 
     init {
         viewModelScope.launch {
-            tags.value = saveAppApplication.tagRepository.allTags.first().toTypedArray()
+            tags.value = saveAppApplication.tagRepository.allTags.first().filter {
+                !it.isIncome
+            }.toTypedArray()
             val result = saveAppApplication.remoteBudgetRepository.getAll()
-            if(result is NetworkResult.Success) {
+            if (result is NetworkResult.Success) {
                 budgets.value = result.data.map {
-                    it.mapToBudget().mapToTaggedBudget()
+                    it.mapToBudget()
                 }.toTypedArray()
             }
         }
@@ -129,6 +135,7 @@ class NewMovementViewModel(application: Application) : AndroidViewModel(applicat
         onDescriptionChanged.invoke()
     }
 
+
     @Bindable
     fun getDate(): LocalDate {
         return _date
@@ -158,11 +165,11 @@ class NewMovementViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     @Bindable
-    fun getBudget(): TaggedBudget? {
+    fun getBudget(): Budget? {
         return _budget
     }
 
-    fun setBudget(value: TaggedBudget?) {
+    fun setBudget(value: Budget?) {
         if (value == _budget) {
             return
         }
@@ -239,9 +246,8 @@ class NewMovementViewModel(application: Application) : AndroidViewModel(applicat
 
             if (_isSubscription) {
                 insertSubscription(newAmount)
-            } else {
-                succeeded = tryInsertMovement(newAmount)
             }
+            succeeded = tryInsertMovement(newAmount)
 
             if (succeeded) {
                 val activity = saveAppApplication.getCurrentActivity() as MainActivity
@@ -282,8 +288,8 @@ class NewMovementViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     private suspend fun tryInsertMovement(amount: Double): Boolean {
-        val budgetId = _budget?.budgetId ?: 0
-        val tagId = _budget?.tagId ?: _tag?.id ?: 0
+        val budgetId = _budget?.id ?: 0
+        val tagId = 0
         val movement = Movement(0, amount, _description, _date, tagId, budgetId)
 
         if (editingMovement != null && editingMovement!!.budgetId != 0) {
@@ -303,48 +309,32 @@ class NewMovementViewModel(application: Application) : AndroidViewModel(applicat
             StatsUtil.addMovementToStat(saveAppApplication, editingMovement!!)
 
             movement.id = editingMovement!!.id
-            movementRepository.update(movement)
+            movementRepository.update(movement.mapToRemoteExpense(selectedTag))
         } else {
-            movementRepository.insert(movement)
+            val r = movementRepository.insert(movement.mapToRemoteExpense(selectedTag))
+            Log.d("NewMovementVM", "result of adding exp = $r")
         }
 
-        StatsUtil.addMovementToStat(saveAppApplication, movement)
+        //StatsUtil.addMovementToStat(saveAppApplication, movement)
 
         return true
     }
 
     private suspend fun insertSubscription(amount: Double) {
-        val tagId = _budget?.tagId ?: _tag?.id ?: 0
-        val subscription = Subscription(
+        val subscription = RemoteSubscription(
             0,
-            amount,
             _description,
-            _renewalType,
-            _date,
-            editingSubscription?.lastPaid,
-            editingSubscription?.nextRenewal ?: _date,
-            tagId,
-            _budget?.budgetId ?: 0
-        )
-        val movement = SubscriptionUtil.getMovementFromSub(
-            subscription, saveAppApplication.resources.getString(
-                R.string.payment_of
-            )
+            amount,
+            null,
+            selectedTag,
+            30,
+            _date.toString()
         )
 
         if (editingSubscription != null) {
-            subscription.id = editingSubscription!!.id
-            subscriptionRepository.update(subscription)
+            subscriptionRepository.update(subscription.copy(id = editingSubscription?.id ?: 0))
         } else {
             subscriptionRepository.insert(subscription)
-        }
-
-        if (movement != null) {
-            if (movement.budgetId != 0 && BudgetUtil.tryAddMovementToBudget(movement) != AddToBudgetResult.SUCCEEDED)
-                movement.budgetId = 0
-
-            movementRepository.insert(movement)
-            StatsUtil.addMovementToStat(saveAppApplication, movement)
         }
     }
 

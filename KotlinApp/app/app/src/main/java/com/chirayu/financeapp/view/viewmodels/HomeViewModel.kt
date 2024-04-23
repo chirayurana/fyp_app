@@ -1,6 +1,7 @@
 package com.chirayu.financeapp.view.viewmodels
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,7 +11,9 @@ import com.chirayu.financeapp.SaveAppApplication
 import com.chirayu.financeapp.data.repository.TagRepository
 import com.chirayu.financeapp.model.entities.Tag
 import com.chirayu.financeapp.model.enums.Currencies
+import com.chirayu.financeapp.network.data.NetworkResult
 import com.chirayu.financeapp.util.SettingsUtil
+import com.chirayu.financeapp.util.SharedPreferencesManager
 import com.chirayu.financeapp.util.StatsUtil
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -21,6 +24,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val saveAppApplication = application as SaveAppApplication
 
     private val tagRepository: TagRepository = saveAppApplication.tagRepository
+    private val incomeRepository = saveAppApplication.incomeRepository
+    private val movementRepository = saveAppApplication.movementRepository
+    private val userRepository = saveAppApplication.userRepository
 
     private val months: Map<Int, MutableLiveData<Double>> = StatsUtil.monthTags
     private val years: Map<Int, MutableLiveData<Double>> = StatsUtil.yearTags
@@ -39,9 +45,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _monthSummary = MutableLiveData(0.0)
     val monthSummary: LiveData<Double> = _monthSummary
 
-    val monthExpenses: LiveData<Double> = StatsUtil.monthExpenses
+    private var _monthExpenses = MutableLiveData(0.0)
+    val monthExpenses: LiveData<Double> = _monthExpenses
 
-    val monthIncomes: LiveData<Double> = StatsUtil.monthIncomes
+    private var _monthIncomes = MutableLiveData(0.0)
+    val monthIncomes: LiveData<Double> = _monthIncomes
 
     private val _monthHighestTag = MutableLiveData(defaultTag)
     val monthHighestTag: LiveData<Tag?> = _monthHighestTag
@@ -55,9 +63,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _yearSummary = MutableLiveData(0.0)
     val yearSummary: MutableLiveData<Double> = _yearSummary
 
-    val yearExpenses: LiveData<Double> = StatsUtil.yearExpenses
+    private var _yearExpenses = MutableLiveData(0.0)
+    val yearExpenses: LiveData<Double> = _yearExpenses
 
-    val yearIncomes: LiveData<Double> = StatsUtil.yearIncomes
+    private var _yearIncomes = MutableLiveData(0.0)
+    val yearIncomes: LiveData<Double> = _yearIncomes
 
     private val _yearHighestTag = MutableLiveData(defaultTag)
     val yearHighestTag: LiveData<Tag?> = _yearHighestTag
@@ -69,9 +79,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _lifeNetWorth = MutableLiveData(0.0)
     val lifeNetWorth: LiveData<Double> = _lifeNetWorth
 
-    val lifeExpenses: LiveData<Double> = StatsUtil.lifeExpenses
+    private val _lifeExpenses = MutableLiveData(0.0)
+    val lifeExpenses: LiveData<Double> = _lifeExpenses
 
-    val lifeIncomes: LiveData<Double> = StatsUtil.lifeIncomes
+    private var _lifeIncomes = MutableLiveData(0.0)
+    val lifeIncomes: LiveData<Double> = _lifeIncomes
 
     private val _lifeHighestTag = MutableLiveData(defaultTag)
     val lifeHighestTag: LiveData<Tag?> = _lifeHighestTag
@@ -79,9 +91,30 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _lifeHighestTagValue = MutableLiveData(-1.0)
     val lifeHighestTagValue: LiveData<Double> = _lifeHighestTagValue
 
+    //user
+    private var _isUserLoggedIn = MutableLiveData(true)
+    val isUserLoggedIn = _isUserLoggedIn
+
     init {
         viewModelScope.launch {
+            val userResult = userRepository.userDetails()
+            if (userResult !is NetworkResult.Success) {
+                saveAppApplication.sharedPreferencesManager.removePreference(
+                    SharedPreferencesManager.TOKEN_KEY
+                )
+                _isUserLoggedIn.value = false
+            }
             _symbol.value = Currencies.from(SettingsUtil.getCurrency().first()).toSymbol()
+            incomeRepository.getIncomeStates().let {
+                _monthIncomes.value = it.monthState
+                _yearIncomes.value = it.yearState
+                _lifeIncomes.value = it.lifeState
+            }
+            movementRepository.getExpenseStates().let {
+                _monthExpenses.value = it.monthState
+                _yearExpenses.value = it.yearState
+                _lifeExpenses.value = it.lifeState
+            }
         }
 
         setupMonth()
@@ -117,14 +150,39 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         runBlocking {
-            for (i: Int in months.keys) {
-                val value = months[i]!!.value!!
-                if (value > _monthHighestTagValue.value!!) {
-                    _monthHighestTag.value = tagRepository.getById(i)
-                    _monthHighestTagValue.value = value
+            val tagStates = movementRepository.getHighestTagPerMonth()
+            _monthHighestTag.value = tagRepository.getByName(tagStates.name)
+            _monthHighestTagValue.value = tagStates.value
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            when (val result = userRepository.logout()) {
+                is NetworkResult.Error -> {
+                    if (result.code == 200) {
+                        removeToken()
+                    }
+                }
+
+                is NetworkResult.Exception -> Log.d(
+                    "LoginViewModel",
+                    "Exception to logout ${result.e.message ?: ""}"
+                )
+
+                is NetworkResult.Success -> {
+                    removeToken()
                 }
             }
         }
+    }
+
+    private fun removeToken() {
+        val sharedPreferencesManager = saveAppApplication.sharedPreferencesManager
+        sharedPreferencesManager.removePreference(
+            SharedPreferencesManager.TOKEN_KEY
+        )
+        _isUserLoggedIn.value = false
     }
 
     private fun setupYear() {
@@ -136,13 +194,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         runBlocking {
-            for (i: Int in years.keys) {
-                val value = years[i]!!.value!!
-                if (value > _yearHighestTagValue.value!!) {
-                    _yearHighestTag.value = tagRepository.getById(i)
-                    _yearHighestTagValue.value = value
-                }
-            }
+            val tagStates = movementRepository.getHighestTagPerYear()
+            _yearHighestTag.value = tagRepository.getByName(tagStates.name)
+            _yearHighestTagValue.value = tagStates.value
         }
     }
 
@@ -155,13 +209,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         runBlocking {
-            for (i: Int in life.keys) {
-                val value = life[i]!!.value!!
-                if (value > _lifeHighestTagValue.value!!) {
-                    _lifeHighestTag.value = tagRepository.getById(i)
-                    _lifeHighestTagValue.value = value
-                }
-            }
+            val tagStates = movementRepository.getHighestTagPerYear()
+            _lifeHighestTag.value = tagRepository.getByName(tagStates.name)
+            _lifeHighestTagValue.value = tagStates.value
         }
     }
 

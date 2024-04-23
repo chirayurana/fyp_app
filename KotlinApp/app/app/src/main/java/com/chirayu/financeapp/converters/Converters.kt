@@ -4,6 +4,7 @@ import androidx.databinding.InverseMethod
 import com.chirayu.financeapp.model.enums.Currencies
 import com.chirayu.financeapp.model.enums.RenewalType
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 object Converters {
     @InverseMethod("tickerToCurrency")
@@ -30,7 +31,8 @@ object Converters {
     @InverseMethod("stringToDate")
     @JvmStatic
     fun dateToString(value: LocalDate?): String {
-        return value?.toString() ?: LocalDate.now().toString()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return value?.format(formatter) ?: LocalDate.now().format(formatter)
     }
 
     @JvmStatic

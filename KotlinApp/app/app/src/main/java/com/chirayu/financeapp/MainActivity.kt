@@ -12,6 +12,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import com.chirayu.financeapp.databinding.ActivityAuthBinding
+import com.chirayu.financeapp.databinding.ActivityMainBinding
 import com.chirayu.financeapp.model.enums.Currencies
 import com.chirayu.financeapp.util.BudgetUtil
 import com.chirayu.financeapp.util.CurrencyUtil
@@ -21,7 +23,10 @@ import com.chirayu.financeapp.util.StatsUtil
 import com.chirayu.financeapp.util.SubscriptionUtil
 import com.chirayu.financeapp.util.TagUtil
 import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.bottomappbar.BottomAppBarTopEdgeTreatment
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.io.FileInputStream
@@ -37,6 +42,8 @@ class MainActivity : AppCompatActivity() {
     private val _isUpdatingCurrencies: MutableLiveData<Boolean> = MutableLiveData(false)
 
     val isUpdatingCurrencies: LiveData<Boolean> = _isUpdatingCurrencies
+
+    private lateinit var binding: ActivityMainBinding
 
     // IO Activities
     val exportMovements = registerForActivityResult(CreateDocument("text/csv")) { uri ->
@@ -134,12 +141,19 @@ class MainActivity : AppCompatActivity() {
         StatsUtil.init(saveApp)
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         saveApp.setCurrentActivity(this)
 
         lifecycleScope.launch { SubscriptionUtil.validateSubscriptions(saveApp) }
         lifecycleScope.launch { CurrencyUtil.init() }
+
+
+        val background = binding.bottomAppBar.background as MaterialShapeDrawable
+        background.shapeAppearanceModel = background.shapeAppearanceModel.toBuilder().setTopEdge(
+            BottomAppBarTopEdgeTreatment(20f,20f,10f)
+        ).build()
 
         setupButtons()
     }
@@ -230,7 +244,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupButtons() {
-        val addMovementButton: Button = findViewById(R.id.addMovementFAB)
+        val addMovementButton: ExtendedFloatingActionButton = findViewById(R.id.addMovementFAB)
         addMovementButton.setOnClickListener {
             onAddMovementClick()
         }

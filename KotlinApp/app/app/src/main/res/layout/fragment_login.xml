@@ -14,9 +14,20 @@
         tools:context=".view.LoginFragment">
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/title"
+            android:text="@string/khutruke"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"/>
+
+        <TextView
             android:id="@+id/login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/title"
             android:layout_marginTop="40dp"
             android:layout_marginStart="40dp"
             android:text="@string/login"
@@ -70,16 +81,6 @@
             android:layout_alignEnd="@id/loginUsernamePasswordInput"
             android:layout_marginTop="20dp"
             android:text="@string/login" />
-
-        <Button
-            android:id="@+id/logoutButton"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/loginButton"
-            android:layout_alignEnd="@id/loginUsernamePasswordInput"
-            android:layout_marginTop="20dp"
-            android:text="Log out" />
 
         <Button
             android:id="@+id/moveToSignupButton"

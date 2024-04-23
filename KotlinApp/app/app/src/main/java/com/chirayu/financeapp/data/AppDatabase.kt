@@ -7,7 +7,6 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.chirayu.financeapp.R
-import com.chirayu.financeapp.data.dao.BudgetDao
 import com.chirayu.financeapp.data.dao.MovementDao
 import com.chirayu.financeapp.data.dao.SubscriptionDao
 import com.chirayu.financeapp.data.dao.TagDao
@@ -20,9 +19,8 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-@Database(entities = [Budget::class, Movement::class, Subscription::class, Tag::class], version = 2)
+@Database(entities = [Movement::class, Subscription::class, Tag::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun budgetDao(): BudgetDao
 
     abstract fun movementDao(): MovementDao
 
@@ -51,9 +49,6 @@ abstract class AppDatabase : RoomDatabase() {
 
             dao.deleteAll()
 
-            dao.insert(
-                Tag(0, cxt.getString(R.string.income), R.color.emerald_500, true)
-            )
             dao.insert(
                 Tag(0, cxt.getString(R.string.bets), R.color.purple_200, false)
             )
@@ -89,6 +84,36 @@ abstract class AppDatabase : RoomDatabase() {
             )
             dao.insert(
                 Tag(0, cxt.getString(R.string.transports), R.color.blue_800, false)
+            )
+            dao.insert(
+                Tag(0,"Stocks",R.color.green_200,true)
+            )
+            dao.insert(
+                Tag(0,"Wages",R.color.black,true)
+            )
+            dao.insert(
+                Tag(0,"Salary",R.color.cyan_200,true)
+            )
+            dao.insert(
+                Tag(0,"Bonuses",R.color.emerald_400,true)
+            )
+            dao.insert(
+                Tag(0,"Tips",R.color.emerald_200,true)
+            )
+            dao.insert(
+                Tag(0,"Commission",R.color.red_200,true)
+            )
+            dao.insert(
+                Tag(0,"Gifts",R.color.red_50,true)
+            )
+            dao.insert(
+                Tag(0,"Royalty",R.color.blue_200,true)
+            )
+            dao.insert(
+                Tag(0,"Pension",R.color.green_200,true)
+            )
+            dao.insert(
+                Tag(0,"Other",R.color.blue_300,true)
             )
         }
     }

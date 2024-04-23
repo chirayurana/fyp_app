@@ -123,7 +123,8 @@ class ManageTagsFragment : Fragment() {
 
         val activity = requireActivity()
         lifecycleScope.launch {
-            val firstMatchingTag = app.movementRepository.getFirstWithTag(item.id)
+            val tag = app.tagRepository.getById(item.id)
+            val firstMatchingTag = app.movementRepository.getFirstWithTag(tag!!)
 
             if (firstMatchingTag != null) {
                 (binding.tagsRecyclerView.adapter as TagsAdapter).notifyItemChanged(position)

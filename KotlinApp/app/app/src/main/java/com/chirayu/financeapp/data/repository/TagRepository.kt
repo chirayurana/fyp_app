@@ -14,6 +14,11 @@ class TagRepository(private val tagDao: TagDao) {
     }
 
     @WorkerThread
+    suspend fun getByName(name : String): Tag? {
+        return tagDao.getByName(name)
+    }
+
+    @WorkerThread
     suspend fun insert(tag: Tag) {
         tagDao.insert(tag)
     }

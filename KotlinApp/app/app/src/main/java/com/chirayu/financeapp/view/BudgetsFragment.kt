@@ -106,7 +106,7 @@ class BudgetsFragment : Fragment() {
                 val budget = adapter.getItemAt(position)
 
                 if (direction == ItemTouchHelper.RIGHT) {
-                    (activity as MainActivity).goToEditBudget(budget.budgetId)
+                    (activity as MainActivity).goToEditBudget(budget.id)
                 } else if (direction == ItemTouchHelper.LEFT) {
                     onRemoveMovementInvoked(budget)
                 }
@@ -135,16 +135,15 @@ class BudgetsFragment : Fragment() {
         }
     }
 
-    private fun onRemoveMovementInvoked(taggedBudget: TaggedBudget) {
+    private fun onRemoveMovementInvoked(taggedBudget: Budget) {
         val app = requireActivity().application as SaveAppApplication
         val budget = Budget(
-            taggedBudget.budgetId,
+            taggedBudget.id,
             taggedBudget.max,
             taggedBudget.used,
             taggedBudget.name,
             taggedBudget.from,
-            taggedBudget.to,
-            taggedBudget.tagId
+            taggedBudget.to
         )
         lifecycleScope.launch {
             app.remoteBudgetRepository.delete(budget.mapToRemoteBudget())

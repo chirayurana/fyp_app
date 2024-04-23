@@ -9,6 +9,7 @@ import com.chirayu.financeapp.R
 import com.chirayu.financeapp.SaveAppApplication
 import com.chirayu.financeapp.model.entities.Tag
 import com.chirayu.financeapp.model.taggeditems.TaggedMovement
+import com.chirayu.financeapp.network.models.mapToTaggedMovement
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -40,7 +41,10 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
 
     init {
         viewModelScope.launch {
-            _movements.value = movementRepo.getAllTaggedByYearSorted(year.value!!.toString())
+            _movements.value = movementRepo.getAllTaggedByYearSorted(year.value!!).map {
+                val tag = saveAppApplication.tagRepository.getByName(it.expenseType?: "")
+                it.mapToTaggedMovement(tag)
+            }
             showEmptyMessage.value = _movements.value?.size == 0
             tags.value = saveAppApplication.tagRepository.allTags.first().toTypedArray()
         }
@@ -53,7 +57,10 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
     }
 
     suspend fun updateMovements() {
-        _movements.value = movementRepo.getAllTaggedByYearSorted(year.value!!.toString())
+        _movements.value = movementRepo.getAllTaggedByYearSorted(year.value!!).map {
+            val tag = saveAppApplication.tagRepository.getByName(it.expenseType?: "")
+            it.mapToTaggedMovement(tag)
+        }
         showEmptyMessage.value = _movements.value?.size == 0
     }
 }

@@ -122,28 +122,28 @@ class NewBudgetFragment : Fragment() {
     }
 
     private fun setupPickers() {
-        val tagAutoComplete = binding.budgetTagInput.editText as AutoCompleteTextView
-        viewModel.tags.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                val adapter = TagsDropdownAdapter(
-                    binding.budgetTagInput.context,
-                    R.layout.tag_dropdown_item,
-                    it
-                )
-
-                tagAutoComplete.setAdapter(adapter)
-                tagAutoComplete.setOnItemClickListener { parent, _, position, _ ->
-                    val selection = parent.adapter.getItem(position) as Tag
-                    viewModel.setTag(selection)
-                }
-
-                if (viewModel.editingBudget != null && viewModel.editingBudget!!.tagId != 0) {
-                    val i = it.indexOfFirst { tag -> tag.id == viewModel.editingBudget!!.tagId }
-                    tagAutoComplete.setText(it[i].name, false)
-                    viewModel.setTag(it[i])
-                }
-            }
-        })
+//        val tagAutoComplete = binding.budgetTagInput.editText as AutoCompleteTextView
+//        viewModel.tags.observe(viewLifecycleOwner, Observer {
+//            it?.let {
+//                val adapter = TagsDropdownAdapter(
+//                    binding.budgetTagInput.context,
+//                    R.layout.tag_dropdown_item,
+//                    it
+//                )
+//
+//                tagAutoComplete.setAdapter(adapter)
+//                tagAutoComplete.setOnItemClickListener { parent, _, position, _ ->
+//                    val selection = parent.adapter.getItem(position) as Tag
+//                    viewModel.setTag(selection)
+//                }
+//
+//                if (viewModel.editingBudget != null && viewModel.editingBudget!!.tagId != 0) {
+//                    val i = it.indexOfFirst { tag -> tag.id == viewModel.editingBudget!!.tagId }
+//                    tagAutoComplete.setText(it[i].name, false)
+//                    viewModel.setTag(it[i])
+//                }
+//            }
+//        })
 
         val currencyAutoComplete = binding.budgetCurrencyInput.editText as AutoCompleteTextView
         viewModel.currencies.observe(viewLifecycleOwner, Observer {

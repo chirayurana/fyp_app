@@ -56,7 +56,9 @@ class SignupFragment : Fragment() {
 
         viewModel.signupUIState.observe(viewLifecycleOwner) { uiState ->
             when (uiState) {
-                is SignupUIState.Error -> Log.d("SignupFragment","Error to sign up "+uiState.error)
+                is SignupUIState.Error -> {
+                    binding.signupUsernameInput.error = "Unable to log in with provided credentials."
+                }
                 SignupUIState.IsSignedUp -> {
                     Intent(requireActivity(),MainActivity::class.java).apply {
                         startActivity(this)
@@ -66,7 +68,32 @@ class SignupFragment : Fragment() {
                 SignupUIState.NotSignedUp -> {}
             }
         }
+
+        viewModel.onUsernameChanged = {managerUsernameError()}
+        viewModel.onPasswordChanged = {managePasswordError()}
+        viewModel.onConfirmPasswordChanged = {manageConfirmPasswordError()}
     }
 
+    private fun managerUsernameError() {
+        binding.signupUsernameInput.error =
+            if (viewModel.getUsername() != "") null else getString(R.string.username_is_empty)
+    }
+
+    private fun managePasswordError() {
+        binding.signupUsernamePasswordInput.error = if(viewModel.getPassword() != "") null else getString(
+            R.string.password_is_empty
+        )
+    }
+
+    private fun manageConfirmPasswordError() {
+        binding.signupUsernameConfirmPasswordInput.error = if(viewModel.getConfirmPassword() != "") {
+            if(viewModel.getConfirmPassword() != viewModel.getPassword())
+                getString(R.string.password_don_t_match)
+            else
+                null
+        } else getString(
+            R.string.confirm_password_is_empty
+        )
+    }
 
 }

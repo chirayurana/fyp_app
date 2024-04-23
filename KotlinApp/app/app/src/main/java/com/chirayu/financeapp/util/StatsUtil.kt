@@ -7,6 +7,7 @@ import android.util.JsonWriter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.chirayu.financeapp.SaveAppApplication
+import com.chirayu.financeapp.data.converters.DateConverter
 import com.chirayu.financeapp.model.entities.Movement
 import com.chirayu.financeapp.model.entities.Tag
 import kotlinx.coroutines.launch
@@ -247,5 +248,17 @@ object StatsUtil {
         }
 
         return updated
+    }
+
+    fun isThisMonth(date: String): Boolean {
+        val dateConverter = DateConverter()
+
+        return LocalDate.now().month == dateConverter.toDate(date).month
+    }
+
+    fun isThisYear(date: String): Boolean {
+        val dateConverter = DateConverter()
+
+        return LocalDate.now().year == dateConverter.toDate(date).year
     }
 }

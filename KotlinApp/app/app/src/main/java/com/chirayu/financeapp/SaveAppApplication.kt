@@ -6,13 +6,15 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.chirayu.financeapp.data.AppDatabase
-import com.chirayu.financeapp.data.repository.BudgetRepository
 import com.chirayu.financeapp.data.repository.MovementRepository
 import com.chirayu.financeapp.data.repository.SubscriptionRepository
 import com.chirayu.financeapp.data.repository.TagRepository
 import com.chirayu.financeapp.network.AuthInterceptor
 import com.chirayu.financeapp.network.BackendAPI
 import com.chirayu.financeapp.network.repository.RemoteBudgetRepository
+import com.chirayu.financeapp.network.repository.RemoteExpenseRepository
+import com.chirayu.financeapp.network.repository.RemoteIncomeRepository
+import com.chirayu.financeapp.network.repository.RemoteSubscriptionRepository
 import com.chirayu.financeapp.network.repository.UserRepository
 import com.chirayu.financeapp.util.SharedPreferencesManager
 import kotlinx.coroutines.CoroutineScope
@@ -44,17 +46,17 @@ class SaveAppApplication : Application() {
         .build()
         .create(BackendAPI::class.java) }
 
-    val movementRepository by lazy { MovementRepository(database.movementDao()) }
+    val movementRepository by lazy { RemoteExpenseRepository(api) }
 
-    val budgetRepository by lazy { BudgetRepository(database.budgetDao()) }
-
-    val subscriptionRepository by lazy { SubscriptionRepository(database.subscriptionDao()) }
+    val subscriptionRepository by lazy { RemoteSubscriptionRepository(api) }
 
     val tagRepository by lazy { TagRepository(database.tagDao()) }
 
     val userRepository by lazy { UserRepository(api) }
 
     val remoteBudgetRepository by lazy { RemoteBudgetRepository(api) }
+
+    val incomeRepository by lazy { RemoteIncomeRepository(api) }
 
     val ratesStore: DataStore<Preferences> by preferencesDataStore("currencies")
 

@@ -7,23 +7,23 @@ import com.chirayu.financeapp.network.models.RemoteSubscription
 
 class RemoteSubscriptionRepository(private val api: BackendAPI) {
 
-    suspend fun retrieveAllSubscriptions() = handleRemoteRequest {
+    suspend fun getAll() = handleRemoteRequest {
         api.retrieveAllSubscriptions()
     }
 
-    suspend fun addExpense(subscription: RemoteSubscription) = handleRemoteRequest {
+    suspend fun insert(subscription: RemoteSubscription) = handleRemoteRequest {
         api.addSubscription(subscription)
     }
 
-    suspend fun retrieveExpense(subscriptionId : Int) = handleRemoteRequest {
+    suspend fun getById(subscriptionId : Int) = handleRemoteRequest {
         api.retrieveSubscription(subscriptionId)
     }
 
-    suspend fun updateExpense(subscriptionId : Int, subscription: RemoteSubscription) = handleRemoteRequest {
-        api.updateSubscription(subscriptionId,subscription)
+    suspend fun update(subscription: RemoteSubscription) = handleRemoteRequest {
+        api.updateSubscription(subscription.id?: 0,subscription)
     }
 
-    suspend fun deleteExpense(subscriptionId : Int) = handleRemoteRequest {
-        api.deleteSubscription(subscriptionId)
+    suspend fun delete(subscription: RemoteSubscription) = handleRemoteRequest {
+        api.deleteSubscription(subscription.id?: 0)
     }
 }

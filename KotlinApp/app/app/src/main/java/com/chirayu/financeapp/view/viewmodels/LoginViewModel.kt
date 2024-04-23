@@ -19,11 +19,11 @@ sealed interface LoginUIState {
     data object NotLogged : LoginUIState
 
     data class Error(
-        val error : String
+        val error: String
     ) : LoginUIState
 
     data class Success(
-        val token : String
+        val token: String
     ) : LoginUIState
 }
 
@@ -34,36 +34,41 @@ class LoginViewModel(application: Application) : AndroidViewModel(application), 
 
     private val callbacks: PropertyChangeRegistry = PropertyChangeRegistry()
 
-    val loginUIState : MutableLiveData<LoginUIState> = MutableLiveData(LoginUIState.NotLogged)
+    val loginUIState: MutableLiveData<LoginUIState> = MutableLiveData(LoginUIState.NotLogged)
 
-    private var _username : String = ""
-    private var _password : String = ""
+    private var _username: String = ""
+    private var _password: String = ""
+
+    var onUsernameChanged: () -> Unit = { }
+    var onPasswordChanged: () -> Unit = { }
 
     // Bindings
     @Bindable
-    fun getUsername() : String {
+    fun getUsername(): String {
         return _username
     }
 
-    fun setUsername(value : String) {
-        if(value == _username)
+    fun setUsername(value: String) {
+        if (value == _username)
             return
 
         _username = value
         notifyPropertyChanged(BR.username)
+        onUsernameChanged()
     }
 
     @Bindable
-    fun getPassword() : String {
+    fun getPassword(): String {
         return _password
     }
 
-    fun setPassword(value : String) {
-        if(value == _password)
+    fun setPassword(value: String) {
+        if (value == _password)
             return
 
         _password = value
         notifyPropertyChanged(BR.password)
+        onPasswordChanged()
     }
 
     // Overrides
@@ -85,38 +90,46 @@ class LoginViewModel(application: Application) : AndroidViewModel(application), 
 
     // Methods
     fun login() {
-        viewModelScope.launch {
-            Log.d("SignUpViewModel",_username)
-            Log.d("SignUpViewModel",_password)
+        if (checkFields()) {
+            viewModelScope.launch {
+                Log.d("SignUpViewModel", _username)
+                Log.d("SignUpViewModel", _password)
 
-            when(val result = userRepository.login(User(_username,_password))) {
-                is NetworkResult.Error -> loginUIState.value = LoginUIState.Error(result.message?: "")
-                is NetworkResult.Exception -> loginUIState.value = LoginUIState.Error(result.e.message?: "")
-                is NetworkResult.Success -> {
-                    saveToken(result.data.token)
-                    loginUIState.value = LoginUIState.Success(result.data.token)
+                when (val result = userRepository.login(User(_username, _password))) {
+                    is NetworkResult.Error -> {
+                        loginUIState.value = LoginUIState.Error(result.message ?: "")
+                    }
+
+                    is NetworkResult.Exception -> loginUIState.value =
+                        LoginUIState.Error(result.e.message ?: "")
+
+                    is NetworkResult.Success -> {
+                        saveToken(result.data.token)
+                        loginUIState.value = LoginUIState.Success(result.data.token)
+                    }
                 }
             }
+
         }
     }
 
-    fun logout() {
-        viewModelScope.launch {
-            when(val result = userRepository.logout()) {
-                is NetworkResult.Error -> Log.d("LoginViewModel","Error to logout ${result.message?: ""}")
-                is NetworkResult.Exception -> Log.d("LoginViewModel","Exception to logout ${result.e.message?: ""}")
-                is NetworkResult.Success ->  {
-                    val sharedPreferencesManager = saveAppApplication.sharedPreferencesManager
-                    sharedPreferencesManager.removePreference(
-                        SharedPreferencesManager.TOKEN_KEY
-                    )
-                }
-            }
-         }
+    private fun checkFields(): Boolean {
+        var isFilled = true
+        if (_username == "") {
+            onUsernameChanged()
+            isFilled = false
+        }
+
+        if (_password == "") {
+            onPasswordChanged()
+            isFilled = false
+        }
+        return isFilled
+
     }
 
-    private fun saveToken(token : String) {
+    private fun saveToken(token: String) {
         val sharedPreferencesManager = saveAppApplication.sharedPreferencesManager
-        sharedPreferencesManager.addPreference(SharedPreferencesManager.TOKEN_KEY,token)
+        sharedPreferencesManager.addPreference(SharedPreferencesManager.TOKEN_KEY, token)
     }
 }

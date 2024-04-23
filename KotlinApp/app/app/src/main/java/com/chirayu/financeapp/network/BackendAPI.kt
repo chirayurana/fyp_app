@@ -24,6 +24,10 @@ interface BackendAPI {
     suspend fun login(@Body user: User) : Response<Token>
 
     @Headers("Authorization: token")
+    @GET("users")
+    suspend fun userDetails() : Response<List<User>>
+
+    @Headers("Authorization: token")
     @POST("delete_token")
     suspend fun logout() : Response<Void>
 

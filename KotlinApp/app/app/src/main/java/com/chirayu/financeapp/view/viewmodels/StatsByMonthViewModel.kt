@@ -8,8 +8,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.chirayu.financeapp.R
 import com.chirayu.financeapp.SaveAppApplication
+import com.chirayu.financeapp.data.converters.DateConverter
 import com.chirayu.financeapp.model.statsitems.MonthMovementsSum
 import com.chirayu.financeapp.model.taggeditems.TaggedMovement
+import com.chirayu.financeapp.network.data.NetworkResult
+import com.chirayu.financeapp.network.models.mapToTaggedMovement
 import com.chirayu.financeapp.util.TagUtil
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -103,14 +106,27 @@ class StatsByMonthViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private suspend fun updateMovements(year: String) {
-        _movements = _app.movementRepository.getAllTaggedByYear(year)
+        val result = _app.movementRepository.getAllTaggedByYear(year.toInt())
+        _movements = result.map {
+            val tag = _app.tagRepository.getByName(it.expenseType ?: "")
+            it.mapToTaggedMovement(tag)
+        }
         _showEmptyMessage.value = _movements.isEmpty()
         clearSums()
-        _movements.forEach {
-            if (_isShowingExpenses.value!! xor TagUtil.incomeTagIds.contains(it.tagId)) {
+        val incomeResult = _app.incomeRepository.getAllTaggedByYear(year.toInt())
+        if (_isShowingExpenses.value!!) {
+            _movements.forEach {
                 _monthSums[it.date.monthValue - 1] += it.amount
             }
+        }else {
+            incomeResult.forEach {
+                _monthSums[(DateConverter().toDate(
+                    it.date ?: LocalDate.now().toString()
+                )).monthValue - 1] += it.amount
+            }
         }
+
+
         updateEntries()
     }
 

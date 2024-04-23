@@ -37,6 +37,10 @@ class SignupViewModel(application: Application) : AndroidViewModel(application),
     private var _password: String = ""
     private var _confirmPassword: String = ""
 
+    var onUsernameChanged: () -> Unit = { }
+    var onPasswordChanged: () -> Unit = { }
+    var onConfirmPasswordChanged: () -> Unit = { }
+
     // Bindings
     @Bindable
     fun getUsername(): String {
@@ -49,6 +53,7 @@ class SignupViewModel(application: Application) : AndroidViewModel(application),
 
         _username = value
         notifyPropertyChanged(BR.username)
+        onUsernameChanged()
     }
 
     @Bindable
@@ -62,6 +67,7 @@ class SignupViewModel(application: Application) : AndroidViewModel(application),
 
         _password = value
         notifyPropertyChanged(BR.password)
+        onPasswordChanged()
     }
 
     @Bindable
@@ -75,6 +81,7 @@ class SignupViewModel(application: Application) : AndroidViewModel(application),
 
         _confirmPassword = value
         notifyPropertyChanged(BR.confirmPassword)
+        onConfirmPasswordChanged()
     }
 
 
@@ -97,24 +104,52 @@ class SignupViewModel(application: Application) : AndroidViewModel(application),
 
     // Methods
     fun signup() {
-        viewModelScope.launch {
-            Log.d("SignUpViewModel", _username)
-            Log.d("SignUpViewModel", _password)
-            Log.d("SignUpViewModel", _confirmPassword)
+        if(checkFields()) {
+            viewModelScope.launch {
+                Log.d("SignUpViewModel", _username)
+                Log.d("SignUpViewModel", _password)
+                Log.d("SignUpViewModel", _confirmPassword)
 
-            when (val result =
-                userRepository.signup(User(_username, _password, _confirmPassword))) {
-                is NetworkResult.Error -> signupUIState.value =
-                    SignupUIState.Error(result.message ?: "")
+                when (val result =
+                    userRepository.signup(User(_username, _password, _confirmPassword))) {
+                    is NetworkResult.Error -> signupUIState.value =
+                        SignupUIState.Error(result.message ?: "")
 
-                is NetworkResult.Exception -> signupUIState.value =
-                    SignupUIState.Error(result.e.message ?: "")
+                    is NetworkResult.Exception -> signupUIState.value =
+                        SignupUIState.Error(result.e.message ?: "")
 
-                is NetworkResult.Success -> {
-                    login()
+                    is NetworkResult.Success -> {
+                        login()
+                    }
                 }
             }
         }
+    }
+
+    private fun checkFields(): Boolean {
+        var isFilled = true
+        if (_username == "") {
+            onUsernameChanged()
+            isFilled = false
+        }
+
+        if (_password == "") {
+            onPasswordChanged()
+            isFilled = false
+        }
+
+        if (_confirmPassword == "") {
+            onConfirmPasswordChanged()
+            isFilled = false
+        }
+
+        if(_password != _confirmPassword) {
+            onConfirmPasswordChanged()
+            isFilled = false
+        }
+
+        return isFilled
+
     }
 
     fun login() {

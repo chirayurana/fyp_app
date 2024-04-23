@@ -8,13 +8,14 @@ import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.chirayu.financeapp.SaveAppApplication
-import com.chirayu.financeapp.data.repository.BudgetRepository
 import com.chirayu.financeapp.data.repository.MovementRepository
 import com.chirayu.financeapp.data.repository.SubscriptionRepository
 import com.chirayu.financeapp.model.CurrencyApiResponse
 import com.chirayu.financeapp.model.enums.Currencies
 import com.chirayu.financeapp.network.data.NetworkResult
 import com.chirayu.financeapp.network.repository.RemoteBudgetRepository
+import com.chirayu.financeapp.network.repository.RemoteExpenseRepository
+import com.chirayu.financeapp.network.repository.RemoteSubscriptionRepository
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.flow.first
@@ -45,8 +46,8 @@ object CurrencyUtil {
         retrofit.create(CurrencyApiServer::class.java)
     }
 
-    private lateinit var movementRepository: MovementRepository
-    private lateinit var subscriptionRepository: SubscriptionRepository
+    private lateinit var movementRepository: RemoteExpenseRepository
+    private lateinit var subscriptionRepository: RemoteSubscriptionRepository
     private lateinit var budgetRepository: RemoteBudgetRepository
 
     private lateinit var ratesStore: DataStore<Preferences>
@@ -93,14 +94,20 @@ object CurrencyUtil {
             val rate = rates[newCurrency.id] / rates[oldCurrency]
             SettingsUtil.setCurrency(newCurrency)
 
-            movementRepository.getAll().forEach {
-                it.amount *= rate
-                movementRepository.update(it)
+            val allMovements = movementRepository.getAll()
+            if(allMovements is NetworkResult.Success) {
+                allMovements.data.forEach {
+                    val movement = it.copy(amount = it.amount * rate)
+                    movementRepository.update(movement)
+                }
             }
-            subscriptionRepository.getAll().forEach {
-                it.amount *= rate
-                subscriptionRepository.update(it)
+            val allSubscriptions = subscriptionRepository.getAll()
+            if(allSubscriptions is NetworkResult.Success){
+                allSubscriptions.data.forEach {
+                    subscriptionRepository.update(it.copy(amount = it.amount * rate))
+                }
             }
+
             val allBudgets = budgetRepository.getAll()
             if(allBudgets is NetworkResult.Success) {
                 allBudgets.data.forEach {

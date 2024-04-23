@@ -108,31 +108,31 @@ class SubscriptionsFragment : Fragment() {
     }
 
     private fun onRemoveMovementInvoked(taggedSubscription: TaggedSubscription) {
-        val app = requireActivity().application as SaveAppApplication
-        val subscription = Subscription(
-            taggedSubscription.id,
-            taggedSubscription.amount,
-            taggedSubscription.description,
-            taggedSubscription.renewalType,
-            taggedSubscription.creationDate,
-            taggedSubscription.lastPaid,
-            taggedSubscription.nextRenewal,
-            taggedSubscription.tagId,
-            taggedSubscription.budgetId
-        )
-        lifecycleScope.launch {
-            app.subscriptionRepository.delete(subscription)
-        }
-
-        Snackbar.make(
-            binding.subscriptionsCoordinatorLayout,
-            R.string.subscription_deleted,
-            Snackbar.LENGTH_SHORT
-        )
-            .setAction(R.string.undo) {
-                lifecycleScope.launch {
-                    app.subscriptionRepository.insert(subscription)
-                }
-            }.show()
+//        val app = requireActivity().application as SaveAppApplication
+//        val subscription = Subscription(
+//            taggedSubscription.id,
+//            taggedSubscription.amount,
+//            taggedSubscription.description,
+//            taggedSubscription.renewalType,
+//            taggedSubscription.creationDate,
+//            taggedSubscription.lastPaid,
+//            taggedSubscription.nextRenewal,
+//            taggedSubscription.tagId,
+//            taggedSubscription.budgetId
+//        )
+//        lifecycleScope.launch {
+//            app.subscriptionRepository.delete(subscription)
+//        }
+//
+//        Snackbar.make(
+//            binding.subscriptionsCoordinatorLayout,
+//            R.string.subscription_deleted,
+//            Snackbar.LENGTH_SHORT
+//        )
+//            .setAction(R.string.undo) {
+//                lifecycleScope.launch {
+//                    app.subscriptionRepository.insert(subscription)
+//                }
+//            }.show()
     }
 }

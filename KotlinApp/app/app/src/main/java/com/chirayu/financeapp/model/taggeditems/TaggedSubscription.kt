@@ -10,12 +10,9 @@ data class TaggedSubscription(
     var id: Int,
     var amount: Double,
     var description: String,
-    var renewalType: RenewalType,
-    var creationDate: LocalDate,
     var lastPaid: LocalDate?,
     var nextRenewal: LocalDate,
     var tagId: Int,
     var tagName: String,
-    var tagColor: Int,
-    var budgetId: Int?
+    var tagColor: Int
 )

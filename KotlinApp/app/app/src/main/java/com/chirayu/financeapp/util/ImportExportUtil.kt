@@ -7,11 +7,15 @@ import com.chirayu.financeapp.model.entities.Budget
 import com.chirayu.financeapp.model.entities.Movement
 import com.chirayu.financeapp.model.entities.Subscription
 import com.chirayu.financeapp.model.entities.mapToRemoteBudget
-import com.chirayu.financeapp.model.entities.mapToTaggedBudget
+import com.chirayu.financeapp.model.entities.mapToRemoteExpense
 import com.chirayu.financeapp.network.data.NetworkResult
+import com.chirayu.financeapp.network.models.RemoteSubscription
 import com.chirayu.financeapp.network.models.mapToBudget
+import com.chirayu.financeapp.network.models.mapToMovement
+import com.chirayu.financeapp.network.models.mapToTaggedMovement
 import com.chirayu.financeapp.util.StringUtil.toBudgetOrNull
 import com.chirayu.financeapp.util.StringUtil.toMovementOrNull
+import com.chirayu.financeapp.util.StringUtil.toRemoteSubscriptionOrNull
 import com.chirayu.financeapp.util.StringUtil.toSubscriptionOrNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -136,7 +140,19 @@ object ImportExportUtil {
     }
 
     private fun exportMovements(writer: BufferedWriter, app: SaveAppApplication) {
-        val movements = runBlocking { app.movementRepository.allTaggedMovements.first() }
+        val movements = runBlocking {
+            val repo = app.movementRepository
+            val tagRepo = app.tagRepository
+            val result = repo.getAll()
+            if (result is NetworkResult.Success) {
+                result.data.map {
+                    val tag = tagRepo.getByName(it.expenseType ?: "")
+                    it.mapToTaggedMovement(tag)
+                }
+            } else {
+                emptyList()
+            }
+        }
 
         writer.write(app.getString(R.string.movements_export_header))
         writer.newLine()
@@ -147,25 +163,33 @@ object ImportExportUtil {
     }
 
     private fun exportSubscriptions(writer: BufferedWriter, app: SaveAppApplication) {
-        val subscriptions =
-            runBlocking { app.subscriptionRepository.allTaggedSubscriptions.first() }
+        val subscriptions = runBlocking {
+            val repo = app.subscriptionRepository
+            val tagRepo = app.tagRepository
+            val result = repo.getAll()
+            if(result is NetworkResult.Success) {
+                result.data
+            }else
+                emptyList()
+        }
 
         writer.write(app.getString(R.string.subscriptions_export_header))
         writer.newLine()
         for (s in subscriptions) {
             writer.write(
-                "${s.id},${s.amount},${s.description},${s.renewalType}," +
-                        "${s.creationDate},${s.lastPaid},${s.nextRenewal},${s.tagId},${s.budgetId}"
+                "${s.id},${s.name},${s.amount},${s.renewalAfter}," +
+                        "${s.lastPaid},${s.subscriptionType}"
             )
             writer.newLine()
         }
     }
 
     private fun exportBudgets(writer: BufferedWriter, app: SaveAppApplication) {
-        val budgets = runBlocking { val result = app.remoteBudgetRepository.getAll()
-            if(result is NetworkResult.Success) {
+        val budgets = runBlocking {
+            val result = app.remoteBudgetRepository.getAll()
+            if (result is NetworkResult.Success) {
                 result.data.map {
-                    it.mapToBudget().mapToTaggedBudget()
+                    it.mapToBudget()
                 }
             } else emptyList()
         }
@@ -173,7 +197,7 @@ object ImportExportUtil {
         writer.write(app.getString(R.string.budgets_export_header))
         writer.newLine()
         for (b in budgets) {
-            writer.write("${b.budgetId},${b.max},${b.used},${b.name},${b.from},${b.to},${b.tagId}")
+            writer.write("${b.id},${b.max},${b.used},${b.name},${b.from},${b.to}")
             writer.newLine()
         }
     }
@@ -198,22 +222,26 @@ object ImportExportUtil {
             app.applicationScope.launch {
                 addMovements.forEach {
                     BudgetUtil.tryAddMovementToBudget(it)
-                    app.movementRepository.insert(it)
+                    val tag = app.tagRepository.getById(it.tagId)
+                    app.movementRepository.insert(it.mapToRemoteExpense(tag?.name ?: ""))
                     StatsUtil.addMovementToStat(app, it)
                 }
                 updateMovements.forEach {
-                    val oldMovement = app.movementRepository.getById(it.id)
-                    if (oldMovement != null) {
-                        if (it.budgetId != 0) {
-                            BudgetUtil.removeMovementFromBudget(oldMovement)
-                            BudgetUtil.tryAddMovementToBudget(it)
-                        }
+                    val result = app.movementRepository.getById(it.id)
+                    if (result !is NetworkResult.Success)
+                        return@launch
 
-                        oldMovement.amount *= -1
-                        StatsUtil.addMovementToStat(app, oldMovement)
+                    val tag = app.tagRepository.getByName(result.data.expenseType ?: "")
+                    val oldMovement = result.data.mapToMovement(tag)
+                    if (it.budgetId != 0) {
+                        BudgetUtil.removeMovementFromBudget(oldMovement)
+                        BudgetUtil.tryAddMovementToBudget(it)
                     }
 
-                    app.movementRepository.update(it)
+                    oldMovement.amount *= -1
+                    StatsUtil.addMovementToStat(app, oldMovement)
+
+                    app.movementRepository.update(it.mapToRemoteExpense(tag?.name ?: ""))
                     StatsUtil.addMovementToStat(app, it)
                 }
             }
@@ -222,13 +250,13 @@ object ImportExportUtil {
     }
 
     private fun importSubscriptions(reader: BufferedReader, app: SaveAppApplication) {
-        val addSubscriptions: MutableList<Subscription> = mutableListOf()
-        val updateSubscriptions: MutableList<Subscription> = mutableListOf()
+        val addSubscriptions: MutableList<RemoteSubscription> = mutableListOf()
+        val updateSubscriptions: MutableList<RemoteSubscription> = mutableListOf()
 
         try {
             reader.lines().forEach {
                 if (it != null) {
-                    val s = it.toSubscriptionOrNull()
+                    val s = it.toRemoteSubscriptionOrNull()
                     if (s != null) {
                         if (s.id == 0) {
                             addSubscriptions.add(s)

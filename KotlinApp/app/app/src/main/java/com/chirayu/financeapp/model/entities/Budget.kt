@@ -16,14 +16,13 @@ data class Budget(
     var used: Double,
     var name: String,
     var from: LocalDate,
-    var to: LocalDate,
-    var tagId: Int
+    var to: LocalDate
 )
 
 fun Budget.mapToRemoteBudget() : RemoteBudget {
     val dateConverter = DateConverter()
     return RemoteBudget(id,name,max,used,dateConverter.toString(to),null,dateConverter.toString(from))
 }
-fun Budget.mapToTaggedBudget() : TaggedBudget {
-    return TaggedBudget(id,max,used,name,from,to,tagId,"",1)
-}
+//fun Budget.mapToTaggedBudget() : TaggedBudget {
+//    return TaggedBudget(id,max,used,name,from,to,tagId,"",1)
+//}

@@ -4,6 +4,7 @@ import com.chirayu.financeapp.converters.Converters
 import com.chirayu.financeapp.model.entities.Budget
 import com.chirayu.financeapp.model.entities.Movement
 import com.chirayu.financeapp.model.entities.Subscription
+import com.chirayu.financeapp.network.models.RemoteSubscription
 import com.chirayu.financeapp.util.DateUtil.toLocalDateOrNull
 import java.time.LocalDate
 
@@ -55,6 +56,30 @@ object StringUtil {
         )
     }
 
+    fun String.toRemoteSubscriptionOrNull(): RemoteSubscription? {
+        val fields: List<String> = this.split(',')
+        if (fields.size != 9) {
+            return null
+        }
+
+        val id: Int = fields[0].toIntOrNull() ?: return null
+        val name = fields[1]
+        val amount: Double = fields[2].toDoubleOrNull() ?: return null
+        val renewalAfter: Int = fields[3].toIntOrNull() ?: return null
+        val lastPaid: LocalDate = fields[4].toLocalDateOrNull() ?: return null
+        val subscriptionType = fields[5]
+
+        return RemoteSubscription(
+            id,
+            name,
+            amount,
+            null,
+            subscriptionType,
+            renewalAfter,
+            lastPaid.toString()
+        )
+    }
+
     fun String.toBudgetOrNull(): Budget? {
         val fields: List<String> = this.split(',')
         if (fields.size != 7) {
@@ -67,10 +92,9 @@ object StringUtil {
         val name = fields[3]
         val from: LocalDate = fields[4].toLocalDateOrNull() ?: return null
         val to: LocalDate = fields[5].toLocalDateOrNull() ?: return null
-        val tagId = fields[6].toIntOrNull() ?: 9
 
         return Budget(
-            id, max, used, name, from, to, tagId
+            id, max, used, name, from, to
         )
     }
 }
